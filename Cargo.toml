@@ -22,4 +22,12 @@ rustc-serialize = "0.3"
 
 [[bin]]
 name = "vote"
-path = "examples/generate_keys.rs"
+path = "app/vote.rs"
+
+[[bin]]
+name = "poll"
+path = "app/poll.rs"
+
+[[bin]]
+name = "vote"
+path = "app/vote.rs"
