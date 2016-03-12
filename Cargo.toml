@@ -1,0 +1,25 @@
+[package]
+authors = ["Safe Exchange Developers <team@safex.io>"]
+description = "Decentralized Block chain Omni based voting mechanism - Proof of Stake communication."
+documentation = "http://safex.io/safex/latest"
+homepage = "http://safex.io"
+license = "GPL-3.0"
+name = "vote"
+readme = "README.md"
+repository = "https://github.com/safex/vote"
+version = "0.1.0"
+
+
+[lib]
+name = "vote"
+src = "src/lib.rs"
+
+
+[dependencies]
+hyper = "0.7.2"
+rustc-serialize = "0.3"
+
+
+[[bin]]
+name = "vote"
+path = "examples/generate_keys.rs"
