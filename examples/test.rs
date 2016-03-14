@@ -5,7 +5,7 @@ use vote::utils::get_address_methods::get_omniwalletorg;
 
 fn main() {
 
-
+	//number 56 equates to Omni Smart Property #56 "SafeExchangeCoin"
 	let the_list = get_omniwalletorg(56);
 	let mut int_new = 0;
 
