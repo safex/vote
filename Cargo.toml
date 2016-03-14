@@ -30,3 +30,7 @@ path = "app/validate.rs"
 hyper = "0.7.2"
 rustc-serialize = "0.3"
 
+
+[[example]]
+name = "test"
+path = "examples/test.rs"

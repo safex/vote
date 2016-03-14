@@ -8,3 +8,4 @@ extern crate hyper;
 pub mod poll;
 pub mod validate;
 pub mod vote;
+pub mod utils;
