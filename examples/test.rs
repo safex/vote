@@ -1,6 +1,7 @@
 extern crate vote;
-
+extern crate safex;
 use vote::utils::get_address_methods::get_omniwalletorg;
+
 
 
 fn main() {
@@ -16,7 +17,7 @@ fn main() {
                 println!("#{:?}", int_new);
 
                 println!("address: {:?}", &the_list[thethings].address);
-                println!("maidsafe coin balance: {:?}", &the_list[thethings].balance);
+                println!("safe exchange coin balance: {:?}", &the_list[thethings].balance);
             }
         }
 
