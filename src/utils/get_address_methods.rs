@@ -9,8 +9,6 @@ use hyper::Client;
 use hyper::header::Connection;
 
 
-
-
 ///Omniwallet.org api balances and relative addresses
 #[derive(RustcDecodable, RustcEncodable)]
 pub struct SingleData {
