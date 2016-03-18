@@ -2,10 +2,8 @@
 
 extern crate rustc_serialize;
 extern crate hyper;
+extern crate safex;
+extern crate bitcoin;
 
-
-#[macro_use]
-pub mod poll;
-pub mod validate;
-pub mod vote;
+pub mod voting;
 pub mod utils;
