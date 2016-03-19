@@ -1,3 +1,8 @@
+//this module spits out a structured vote as json data
+
+//save the vote to a file
+
+
 
 
 #[derive(RustcDecodable, RustcEncodable)]

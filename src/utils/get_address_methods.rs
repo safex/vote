@@ -30,7 +30,8 @@ impl OmniList {
             address_list: Vec::new(),
         }
     }
-    //check if a given address exists
+
+    ///returns true or false if a given address exists in the list
     pub fn check_existence(&self, address: String) -> bool {
         for addresses in &self.address_list {
             if addresses.address == address {
@@ -39,11 +40,13 @@ impl OmniList {
         }
         false
     }
+
+    ///return list of addresses and balances from OmniList object
     pub fn return_list(&self) -> &Vec<SingleData> {
         &self.address_list
     }
 
-    
+
 }
 
 pub fn get_omniwalletorg(spindex: i32) -> OmniList {

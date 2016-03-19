@@ -1,4 +1,5 @@
 
+use utils::get_address_methods::OmniList;
 #[derive(RustcDecodable, RustcEncodable)]
 struct VotingRound {
 	//when the voting round begins
@@ -17,10 +18,16 @@ struct VotingRound {
 	origin_pubkey: Vec<u8>,
 	//signature of the voting round by originator
 	origin_signature: Vec<u8>,
+	//store a list of eligible addresses
+	eligible_addresses: OmniList,
 }
 
 
-
+impl VotingRound {
+	pub fn new() {
+		
+	}
+}
 
 
 
