@@ -56,9 +56,9 @@ impl VotingRound {
 			eligible_addresses: OmniList::new(),
 		}
 	}
-
-
-
+	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: KeyPair) -> VotingRound {
+		
+	}
 }
 
 
