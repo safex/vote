@@ -33,6 +33,9 @@ hyper = "0.6.16"
 [dependencies.safex]
 git = "https://github.com/safex/safex"
 
+[dependencies.bitcoin]
+git = "https://github.com/safex/safex-bitcoin"
+
 
 [[example]]
 name = "test"
