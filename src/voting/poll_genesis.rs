@@ -1,5 +1,24 @@
 
 use utils::get_address_methods::OmniList;
+use safex::genesis::key_generation::{KeyPair};
+
+struct PollPersona {
+	poller_keys: KeyPair,
+	voting_round: VotingRound,
+}
+
+
+impl PollPersona {
+	pub fn persona_fromstring(secret: String) -> PollPersona {
+		let new_keys = KeyPair::keypair_frombase64(secret);
+		let votings = VotingRound::new();
+		PollPersona {
+			poller_keys: new_keys,
+			voting_round: votings,
+		}
+	}
+}
+
 #[derive(RustcDecodable, RustcEncodable)]
 struct VotingRound {
 	//when the voting round begins
@@ -24,7 +43,20 @@ struct VotingRound {
 
 
 impl VotingRound {
-	pub fn new() {
+	pub fn new() -> VotingRound {
+		VotingRound {
+			start_blockheight: 0,
+			end_blockheight: 0,
+			the_terms: String::new(),
+			responses: Vec::new(),
+			sp_number: 0,
+			poll_hash: Vec::new(),
+			origin_pubkey: Vec::new(),
+			origin_signature: Vec::new(),
+			eligible_addresses: OmniList::new(),
+		}
+	}
+	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: KeyPair) -> VotingRound {
 		
 	}
 }
