@@ -1,6 +1,5 @@
 
-
-
+use utils::get_address_methods::OmniList;
 
 use bitcoin::util::hash::Sha256dHash;
 use safex::genesis::key_generation::KeyPair;
