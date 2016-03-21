@@ -82,43 +82,66 @@ impl PollRound {
 		}
 	}
 	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: KeyPair, elig_address: OmniList) -> PollRound {
+		
 		let key_hash160 = KeyPair::address_base58(&keys.public);
-		let key_hash1602 = KeyPair::address_base58(&keys.public);
+		let elig_checkclone = elig_address.clone();
 		let eligible_clone = elig_address.clone();
-		let the_responseclone = responses.clone();
-		let terms_clone = the_terms.clone();
-		let the_pollhash_elems = PollHash {
-			start_block: start_block,
-			end_block: end_block,
-			the_terms: the_terms,
-			responses: responses,
-			sp_num: sp_num,
-			origin_pub: key_hash160,
-			eligible_addresses: elig_address,
-		};
-		let the_pollhash = the_pollhash_elems.return_hash();
-		let poll_hashclone = the_pollhash.clone();
-		let poll_hash_sig = KeyPair::sign(&keys.secret, the_pollhash.into_bytes());
-		let the_poll = PollRound {
-			start_blockheight: start_block,
-			//when the voting round ends
-			end_blockheight: end_block,
-			//the word describing the proposal
-			the_terms: terms_clone,
-			//the possible response strings
-			responses: the_responseclone,
-			//the number corresponding to the property address
-			sp_number: sp_num,
-			//the sha256dhash of the poll in json format
-			poll_hash: poll_hashclone.into_bytes(),
-			//public key of originator of the poll
-			origin_pubkey: key_hash1602,
-			//signature of the voting round by originator
-			origin_signature: poll_hash_sig,
-			//store a list of eligible addresses
-			eligible_addresses: eligible_clone,
-		};
-		the_poll
+		if elig_checkclone.check_existence(key_hash160) == true {
+			let key_hash160 = KeyPair::address_base58(&keys.public);
+			let key_hash1602 = KeyPair::address_base58(&keys.public);
+			let the_responseclone = responses.clone();
+			let terms_clone = the_terms.clone();
+			let the_pollhash_elems = PollHash {
+				start_block: start_block,
+				end_block: end_block,
+				the_terms: the_terms,
+				responses: responses,
+				sp_num: sp_num,
+				origin_pub: key_hash160,
+				eligible_addresses: elig_address,
+			};
+			let the_pollhash = the_pollhash_elems.return_hash();
+			let poll_hashclone = the_pollhash.clone();
+			let poll_hash_sig = KeyPair::sign(&keys.secret, the_pollhash.into_bytes());
+			let the_poll = PollRound {
+				start_blockheight: start_block,
+				//when the voting round ends
+				end_blockheight: end_block,
+				//the word describing the proposal
+				the_terms: terms_clone,
+				//the possible response strings
+				responses: the_responseclone,
+				//the number corresponding to the property address
+				sp_number: sp_num,
+				//the sha256dhash of the poll in json format
+				poll_hash: poll_hashclone.into_bytes(),
+				//public key of originator of the poll
+				origin_pubkey: key_hash1602,
+				//signature of the voting round by originator
+				origin_signature: poll_hash_sig,
+				//store a list of eligible addresses
+				eligible_addresses: eligible_clone,
+			};
+			the_poll
+		} else {
+			print!("ineligible address attempting to make a poll, you need some coins first");
+			PollRound {
+			start_blockheight: 0,
+			end_blockheight: 0,
+			the_terms: String::new(),
+			responses: Vec::new(),
+			sp_number: 0,
+			poll_hash: Vec::new(),
+			origin_pubkey: String::new(),
+			origin_signature: Vec::new(),
+			eligible_addresses: OmniList::new(),
+			}
+		}
+	}
+
+	pub fn return_jsonstring(&self) -> String {
+    	let encoded = json::encode(&self).unwrap();
+    	encoded
 	}
 }
 

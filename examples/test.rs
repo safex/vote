@@ -18,7 +18,7 @@ fn main() {
 
     print!("\n");
     let contains_or = the_list.check_existence("15N8mbsRwiwyQpsTUcGfETpStYkTFjcHvh".to_string());
-	/*print!("Does the address contain? 15N8mbsRwiwyQpsTUcGfETpStYkTFjcHvh : {:?} \n", contains_or);
+	print!("Does the address contain? 15N8mbsRwiwyQpsTUcGfETpStYkTFjcHvh : {:?} \n", contains_or);
 
     let mut int_new = 0;
 
@@ -32,5 +32,5 @@ fn main() {
                 println!("safe exchange coin balance: {:?}", &list_elements[thethings].balance);
             }
         }
-*/
+
 }
