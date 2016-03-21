@@ -10,14 +10,14 @@ use hyper::header::Connection;
 
 
 ///Omniwallet.org api balances and relative addresses
-#[derive(RustcDecodable, RustcEncodable)]
+#[derive(Clone, RustcDecodable, RustcEncodable)]
 pub struct SingleData {
     pub balance: i32,
     pub reserved_balance: i32,
     pub address: String,
 }
 
-#[derive(RustcDecodable, RustcEncodable)]
+#[derive(Clone, RustcDecodable, RustcEncodable)]
 pub struct OmniList {
     address_list: Vec<SingleData>
 }
