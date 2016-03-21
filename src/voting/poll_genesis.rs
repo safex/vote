@@ -26,7 +26,7 @@ impl PollPersona {
 }
 
 #[derive(RustcDecodable, RustcEncodable)]
-struct PollRound {
+pub struct PollRound {
 	//when the voting round begins
 	start_blockheight: i32,
 	//when the voting round ends
@@ -47,8 +47,8 @@ struct PollRound {
 	eligible_addresses: OmniList,
 }
 
-#[derive(RustcDecodable, RustcEncodable)]
-struct PollHash {
+#[derive(Clone, RustcDecodable, RustcEncodable)]
+pub struct PollHash {
 	start_block: i32,
 	end_block: i32,
 	the_terms: String,
@@ -81,8 +81,12 @@ impl PollRound {
 			eligible_addresses: OmniList::new(),
 		}
 	}
-	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: KeyPair, elig_address: OmniList)  {
+	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: KeyPair, elig_address: OmniList) -> PollRound {
 		let key_hash160 = KeyPair::address_base58(&keys.public);
+		let key_hash1602 = KeyPair::address_base58(&keys.public);
+		let eligible_clone = elig_address.clone();
+		let the_responseclone = responses.clone();
+		let terms_clone = the_terms.clone();
 		let the_pollhash_elems = PollHash {
 			start_block: start_block,
 			end_block: end_block,
@@ -93,7 +97,28 @@ impl PollRound {
 			eligible_addresses: elig_address,
 		};
 		let the_pollhash = the_pollhash_elems.return_hash();
-		print!("{:?}", the_pollhash);
+		let poll_hashclone = the_pollhash.clone();
+		let poll_hash_sig = KeyPair::sign(&keys.secret, the_pollhash.into_bytes());
+		let the_poll = PollRound {
+			start_blockheight: start_block,
+			//when the voting round ends
+			end_blockheight: end_block,
+			//the word describing the proposal
+			the_terms: terms_clone,
+			//the possible response strings
+			responses: the_responseclone,
+			//the number corresponding to the property address
+			sp_number: sp_num,
+			//the sha256dhash of the poll in json format
+			poll_hash: poll_hashclone.into_bytes(),
+			//public key of originator of the poll
+			origin_pubkey: key_hash1602,
+			//signature of the voting round by originator
+			origin_signature: poll_hash_sig,
+			//store a list of eligible addresses
+			eligible_addresses: eligible_clone,
+		};
+		the_poll
 	}
 }
 
