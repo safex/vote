@@ -2,8 +2,18 @@
 
 //save the vote to a file
 
+
+use safex::genesis::key_generation::KeyPair;
+use utils::get_address_methods::OmniList;
+
+
+use rustc_serialize::{Decodable, Decoder};
+use rustc_serialize::json::{self, ToJson, Json};
+
+use bitcoin::util::hash::Sha256dHash;
+
 struct VotePersona {
-	poller_keys: KeyPair,
+	voter_keys: KeyPair,
 	voting_round: VoteRound,
 }
 
@@ -13,12 +23,11 @@ impl VotePersona {
 		let new_keys = KeyPair::keypair_frombase64(secret);
 		let votings = VoteRound::new();
 		VotePersona {
-			poller_keys: new_keys,
+			voter_keys: new_keys,
 			voting_round: votings,
 		}
 	}
 }
-
 
 #[derive(RustcDecodable, RustcEncodable)]
 struct VoteRound {
@@ -31,6 +40,18 @@ struct VoteRound {
 
 
 impl VoteRound {
+	pub fn new() -> VoteRound {
+		VoteRound {
+			poll_hash: Vec::new(),
+			vote_hash: Vec::new(),
+			vote_message: String::new(),
+			vote_signature: Vec::new(),
+			vote_publickey: String::new(),
+		}
+	}
+	pub fn from_poll(poll_round: String) {
+
+	}
 
 //	Sha256dHash::from_data(&message[..]);
 
