@@ -144,6 +144,18 @@ impl PollRound {
     	encoded
 	}
 
+	pub fn poll_fromjson(json: String) -> PollRound {
+		let poll_data: PollRound = json::decode(&json).unwrap();
+		poll_data
+	}
+
+	pub fn return_pollhash(&self) -> &[u8] {
+		&self.poll_hash[..]
+	}
+
+	pub fn return_pollchoices(&self) -> &[String] {
+		&self.responses
+	}
 	pub fn write_poll(&self) {
 
 	}
