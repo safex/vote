@@ -143,6 +143,10 @@ impl VoteRound {
 	pub fn write_vote(&self) {
 
 	}
+
+	pub fn read_poll() {
+		
+	}
 //	Sha256dHash::from_data(&message[..]);
 
 

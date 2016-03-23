@@ -8,6 +8,13 @@ use rustc_serialize::json::{self, ToJson, Json};
 
 use bitcoin::util::hash::Sha256dHash;
 
+use std::fs;
+use std::fs::File;
+use std::path::Path;
+use std::env;
+use std::io;
+use std::fs::OpenOptions;
+
 struct PollPersona {
 	poller_keys: KeyPair,
 	voting_round: PollRound,
@@ -157,11 +164,31 @@ impl PollRound {
 		&self.responses
 	}
 	pub fn write_poll(&self) {
+		let mut the_home_dir = String::new();
 
+    	match env::home_dir() {
+        	Some(ref p) => the_home_dir = p.display().to_string(),
+        	None => println!("Impossible to get your home dir!")
+    	}
+    	let path_string = String::from("/test_root/");
+    	let path_string3 = the_home_dir + &path_string;
+    	let path = Path::new(&path_string3); 
+		touch(&Path::new(path)).unwrap_or_else(|why| {
+               println!("! {:?}", why.kind());
+    	});
+
+    	
 	}
 }
 
-
+pub fn touch(path: &Path) -> io::Result<()> {
+    match OpenOptions::new().write(true).read(true).create(true).open(path) {
+        Ok(_) => { 
+        	println!("making {:?}", path);
+        	Ok(()) },
+        Err(e) => Err(e),
+    }
+}
 
 #[test]
 fn test() {
