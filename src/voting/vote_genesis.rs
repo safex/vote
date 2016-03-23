@@ -50,7 +50,7 @@ impl VoteRound {
 		}
 	}
 	pub fn from_poll(poll_round: String) {
-
+		
 	}
 
 //	Sha256dHash::from_data(&message[..]);
