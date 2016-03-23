@@ -6,6 +6,7 @@
 use safex::genesis::key_generation::KeyPair;
 use utils::get_address_methods::OmniList;
 
+use voting::poll_genesis::PollRound;
 
 use rustc_serialize::{Decodable, Decoder};
 use rustc_serialize::json::{self, ToJson, Json};
@@ -29,9 +30,11 @@ impl VotePersona {
 	}
 }
 
+
+
 #[derive(RustcDecodable, RustcEncodable)]
-struct VoteRound {
-	poll_hash: Vec<u8>,
+pub struct VoteRound {
+	pub poll_hash: Vec<u8>,
 	vote_hash: Vec<u8>,
 	vote_message: String,
 	vote_signature: Vec<u8>,
@@ -49,10 +52,19 @@ impl VoteRound {
 			vote_publickey: String::new(),
 		}
 	}
-	pub fn from_poll(poll_round: String) {
+	pub fn from_poll(&self, poll_round: String) {
+		//get the poll's hash
+		//need to validate the poll contents as well
+		let poll_data: PollRound = json::decode(&poll_round).unwrap();
+
+	}
+	pub fn select_answer(&self) {
 
 	}
 
+	pub fn write_vote(&self) {
+
+	}
 //	Sha256dHash::from_data(&message[..]);
 
 
