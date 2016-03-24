@@ -8,10 +8,12 @@ use rustc_serialize::json::{self, ToJson, Json};
 
 use bitcoin::util::hash::Sha256dHash;
 
+use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::path::Path;
 use std::env;
+use std::io::Write;
 use std::io;
 use std::fs::OpenOptions;
 
@@ -170,14 +172,31 @@ impl PollRound {
         	Some(ref p) => the_home_dir = p.display().to_string(),
         	None => println!("Impossible to get your home dir!")
     	}
+    	let poll_hash = self.return_pollhash();
+		let mut pollhash: Vec<u8> = Vec::new();
+		for a in poll_hash.iter() {
+
+			pollhash.push(*a);
+		}
+		let hash_path = String::from_utf8(pollhash).unwrap();
     	let path_string = String::from("/test_root/");
-    	let path_string3 = the_home_dir + &path_string;
+    	let path_string3 = the_home_dir + &path_string + &hash_path + &".poll".to_string();
     	let path = Path::new(&path_string3); 
 		touch(&Path::new(path)).unwrap_or_else(|why| {
                println!("! {:?}", why.kind());
-    	});
+    	}); 
 
-    	
+    	let display = "a";
+		let mut file = match OpenOptions::new().read(true).write(true).open(path) {
+            // The `description` method of `io::Error` returns a string that
+            // describes the error
+        	Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+       		Ok(file) => file,
+    	};
+
+    	let encoded = PollRound::return_jsonstring(self);
+		let json_str = encoded.to_string();
+		file.write_all(&encoded.as_bytes()).unwrap();
 	}
 }
 
