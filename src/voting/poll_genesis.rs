@@ -16,14 +16,26 @@ use std::env;
 use std::io::Write;
 use std::io;
 use std::fs::OpenOptions;
+use std::io::Read;
+use std::io::{BufRead};
 
-struct PollPersona {
+pub struct PollPersona {
 	poller_keys: KeyPair,
 	voting_round: PollRound,
 }
 
 
 impl PollPersona {
+	pub fn import_keys() -> PollPersona {
+		print!("input your private key");
+		let mut input2 = String::new();
+    	let stdin2 = io::stdin();
+    	stdin2.lock().read_line(&mut input2).unwrap();
+
+    	let trimmed = input2.trim_right_matches("\n");
+    	let persona = PollPersona::persona_fromstring(trimmed.to_string());
+    	persona
+	}
 	pub fn persona_fromstring(secret: String) -> PollPersona {
 		let new_keys = KeyPair::keypair_frombase64(secret);
 		let votings = PollRound::new();
@@ -31,6 +43,9 @@ impl PollPersona {
 			poller_keys: new_keys,
 			voting_round: votings,
 		}
+	}
+	pub fn return_keys(&self) -> &KeyPair {
+		&self.poller_keys
 	}
 }
 
@@ -90,7 +105,7 @@ impl PollRound {
 			eligible_addresses: OmniList::new(),
 		}
 	}
-	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: KeyPair, elig_address: OmniList) -> PollRound {
+	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: &KeyPair, elig_address: OmniList) -> PollRound {
 		
 		let key_hash160 = KeyPair::address_base58(&keys.public);
 		let elig_checkclone = elig_address.clone();
@@ -214,5 +229,5 @@ fn test() {
 	use utils::get_address_methods::get_omniwalletorg;
 	let the_keys = KeyPair::create().unwrap();
 	let omni_list = get_omniwalletorg(56);
-	PollRound::new_wparams("hello".to_string(), 1, 2, vec!["hello".to_string(), "goodbye".to_string()], 3, the_keys, omni_list);
+	PollRound::new_wparams("hello".to_string(), 1, 2, vec!["hello".to_string(), "goodbye".to_string()], 3, &the_keys, omni_list);
 }
