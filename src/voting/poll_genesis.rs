@@ -8,13 +8,34 @@ use rustc_serialize::json::{self, ToJson, Json};
 
 use bitcoin::util::hash::Sha256dHash;
 
-struct PollPersona {
+use std::error::Error;
+use std::fs;
+use std::fs::File;
+use std::path::Path;
+use std::env;
+use std::io::Write;
+use std::io;
+use std::fs::OpenOptions;
+use std::io::Read;
+use std::io::{BufRead};
+
+pub struct PollPersona {
 	poller_keys: KeyPair,
 	voting_round: PollRound,
 }
 
 
 impl PollPersona {
+	pub fn import_keys() -> PollPersona {
+		print!("input your private key");
+		let mut input2 = String::new();
+    	let stdin2 = io::stdin();
+    	stdin2.lock().read_line(&mut input2).unwrap();
+
+    	let trimmed = input2.trim_right_matches("\n");
+    	let persona = PollPersona::persona_fromstring(trimmed.to_string());
+    	persona
+	}
 	pub fn persona_fromstring(secret: String) -> PollPersona {
 		let new_keys = KeyPair::keypair_frombase64(secret);
 		let votings = PollRound::new();
@@ -22,6 +43,9 @@ impl PollPersona {
 			poller_keys: new_keys,
 			voting_round: votings,
 		}
+	}
+	pub fn return_keys(&self) -> &KeyPair {
+		&self.poller_keys
 	}
 }
 
@@ -81,7 +105,7 @@ impl PollRound {
 			eligible_addresses: OmniList::new(),
 		}
 	}
-	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: KeyPair, elig_address: OmniList) -> PollRound {
+	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: &KeyPair, elig_address: OmniList) -> PollRound {
 		
 		let key_hash160 = KeyPair::address_base58(&keys.public);
 		let elig_checkclone = elig_address.clone();
@@ -157,16 +181,53 @@ impl PollRound {
 		&self.responses
 	}
 	pub fn write_poll(&self) {
+		let mut the_home_dir = String::new();
 
+    	match env::home_dir() {
+        	Some(ref p) => the_home_dir = p.display().to_string(),
+        	None => println!("Impossible to get your home dir!")
+    	}
+    	let poll_hash = self.return_pollhash();
+		let mut pollhash: Vec<u8> = Vec::new();
+		for a in poll_hash.iter() {
+
+			pollhash.push(*a);
+		}
+		let hash_path = String::from_utf8(pollhash).unwrap();
+    	let path_string = String::from("/test_root/");
+    	let path_string3 = the_home_dir + &path_string + &hash_path + &".poll".to_string();
+    	let path = Path::new(&path_string3); 
+		touch(&Path::new(path)).unwrap_or_else(|why| {
+               println!("! {:?}", why.kind());
+    	}); 
+
+    	let display = "a";
+		let mut file = match OpenOptions::new().read(true).write(true).open(path) {
+            // The `description` method of `io::Error` returns a string that
+            // describes the error
+        	Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+       		Ok(file) => file,
+    	};
+
+    	let encoded = PollRound::return_jsonstring(self);
+		let json_str = encoded.to_string();
+		file.write_all(&encoded.as_bytes()).unwrap();
 	}
 }
 
-
+pub fn touch(path: &Path) -> io::Result<()> {
+    match OpenOptions::new().write(true).read(true).create(true).open(path) {
+        Ok(_) => { 
+        	println!("making {:?}", path);
+        	Ok(()) },
+        Err(e) => Err(e),
+    }
+}
 
 #[test]
 fn test() {
 	use utils::get_address_methods::get_omniwalletorg;
 	let the_keys = KeyPair::create().unwrap();
 	let omni_list = get_omniwalletorg(56);
-	PollRound::new_wparams("hello".to_string(), 1, 2, vec!["hello".to_string(), "goodbye".to_string()], 3, the_keys, omni_list);
+	PollRound::new_wparams("hello".to_string(), 1, 2, vec!["hello".to_string(), "goodbye".to_string()], 3, &the_keys, omni_list);
 }

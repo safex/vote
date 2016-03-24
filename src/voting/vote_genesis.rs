@@ -13,7 +13,14 @@ use rustc_serialize::json::{self, ToJson, Json};
 
 use bitcoin::util::hash::Sha256dHash;
 
+use std::error::Error;
+use std::fs;
+use std::fs::File;
+use std::path::Path;
+use std::env;
+use std::io::Write;
 use std::io;
+use std::fs::OpenOptions;
 use std::io::Read;
 use std::io::{BufRead};
 
@@ -142,6 +149,10 @@ impl VoteRound {
 
 	pub fn write_vote(&self) {
 
+	}
+
+	pub fn read_poll() {
+		
 	}
 //	Sha256dHash::from_data(&message[..]);
 
