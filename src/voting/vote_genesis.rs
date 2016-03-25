@@ -31,6 +31,16 @@ pub struct VotePersona {
 
 
 impl VotePersona {
+	pub fn import_keys() -> VotePersona {
+		println!("input your private key");
+		let mut input2 = String::new();
+    	let stdin2 = io::stdin();
+    	stdin2.lock().read_line(&mut input2).unwrap();
+
+    	let trimmed = input2.trim_right_matches("\n");
+    	let persona = VotePersona::persona_fromstring(trimmed.to_string());
+    	persona
+	}
 	pub fn persona_fromstring(secret: String) -> VotePersona {
 		let new_keys = KeyPair::keypair_frombase64(secret);
 		let votings = VoteRound::new();
@@ -38,6 +48,9 @@ impl VotePersona {
 			voter_keys: new_keys,
 			voting_round: votings,
 		}
+	}
+	pub fn return_keys(&self) -> &KeyPair {
+		&self.voter_keys
 	}
 }
 
@@ -148,13 +161,59 @@ impl VoteRound {
 	}
 
 	pub fn write_vote(&self) {
+		let mut the_home_dir = String::new();
 
+    	match env::home_dir() {
+        	Some(ref p) => the_home_dir = p.display().to_string(),
+        	None => println!("Impossible to get your home dir!")
+    	}
+    	let vote_hash = self.return_votehash();
+		let mut votehash: Vec<u8> = Vec::new();
+		for a in vote_hash.iter() {
+
+			votehash.push(*a);
+		}
+		let hash_path = String::from_utf8(votehash).unwrap();
+    	let path_string = String::from("/make_votes/");
+    	let path_string3 = the_home_dir + &path_string + &hash_path + &".vote".to_string();
+    	let path = Path::new(&path_string3); 
+		touch(&Path::new(path)).unwrap_or_else(|why| {
+               println!("! {:?}", why.kind());
+    	}); 
+
+    	let display = "a";
+		let mut file = match OpenOptions::new().read(true).write(true).open(path) {
+            // The `description` method of `io::Error` returns a string that
+            // describes the error
+        	Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+       		Ok(file) => file,
+    	};
+
+    	let encoded = VoteRound::return_jsonstring(self);
+		let json_str = encoded.to_string();
+		file.write_all(&encoded.as_bytes()).unwrap();
 	}
 
-	pub fn read_poll() {
-		
+	pub fn return_votehash(&self) -> &[u8] {
+		&self.vote_hash[..]
 	}
-//	Sha256dHash::from_data(&message[..]);
+
+	pub fn return_jsonstring(&self) -> String {
+    	let encoded = json::encode(&self).unwrap();
+    	encoded
+	}
 
 
+
+	
 }
+
+pub fn touch(path: &Path) -> io::Result<()> {
+    match OpenOptions::new().write(true).read(true).create(true).open(path) {
+        Ok(_) => { 
+        	println!("making {:?}", path);
+        	Ok(()) },
+        Err(e) => Err(e),
+    }
+}
+
