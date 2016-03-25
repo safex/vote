@@ -280,6 +280,11 @@ impl PollRound {
 		&self.responses
 	}
 
+	///returns the list of eligible addresses within the PollRound struct
+	pub fn return_eligibleaddresses(&self) -> &OmniList {
+		&self.eligible_addresses
+	}
+
 	///writes the poll to a file
 	pub fn write_poll(&self) {
 		let mut the_home_dir = String::new();
