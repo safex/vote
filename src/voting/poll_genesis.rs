@@ -168,7 +168,7 @@ impl PollRound {
 		}
 	}
 
-	///the commandline function for forming a PollRound object with users' input
+	///the commandline function for forming a PollRound object with users' input writes to the home/make_polls/ directory
 	pub fn make_poll() {
 		let our_persona = PollPersona::import_keys();
 

@@ -143,6 +143,32 @@ impl VoteRound {
 		//let poll_hash = 
 
 	}
+
+	
+	pub fn form_vote() {
+		let persona = import_keys();
+
+		println!("please enter path of the poll you intend to vote on");
+		let mut path = String::new();
+    	let stdin = io::stdin();
+    	stdin.lock().read_line(&mut path).unwrap();
+    	let path_trim = path.trim_right_matches("\n");
+
+
+    	let path = Path::new(&path_trim);
+    	let display = "a";
+   		let mut file = match OpenOptions::new().read(true).write(false).open(path) {
+            // The `description` method of `io::Error` returns a string that
+            // describes the error
+        	Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+        	Ok(file) => file,
+    	};
+
+
+
+	}
+
+
 	pub fn select_answer(poll_choices: &[String]) -> i32 {
 		print!("choices are: ");
 		let mut index = 0;
