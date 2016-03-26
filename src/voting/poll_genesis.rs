@@ -168,7 +168,7 @@ impl PollRound {
 		}
 	}
 
-	///the commandline function for forming a PollRound object with users' input
+	///the commandline function for forming a PollRound object with users' input writes to the home/make_polls/ directory
 	pub fn make_poll() {
 		let our_persona = PollPersona::import_keys();
 
@@ -278,6 +278,11 @@ impl PollRound {
 	///returns the choices within the PollRound struct
 	pub fn return_pollchoices(&self) -> &[String] {
 		&self.responses
+	}
+
+	///returns the list of eligible addresses within the PollRound struct
+	pub fn return_eligibleaddresses(&self) -> &OmniList {
+		&self.eligible_addresses
 	}
 
 	///writes the poll to a file

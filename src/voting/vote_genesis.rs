@@ -93,7 +93,7 @@ impl VoteRound {
 			vote_publickey: String::new(),
 		}
 	}
-	pub fn from_poll(&self, poll_round: String, persona: VotePersona) -> VoteRound {
+	pub fn from_poll(poll_round: String, persona: VotePersona) -> VoteRound {
 		//get the poll's hash
 		//need to validate the poll contents as well
 		
@@ -143,14 +143,57 @@ impl VoteRound {
 		//let poll_hash = 
 
 	}
+
+	
+	pub fn form_vote() {
+		let persona = VotePersona::import_keys();
+
+		println!("please enter path of the poll you intend to vote on");
+		let mut path = String::new();
+    	let stdin = io::stdin();
+    	stdin.lock().read_line(&mut path).unwrap();
+    	let path_trim = path.trim_right_matches("\n");
+
+
+    	let path = Path::new(&path_trim);
+    	let display = "a";
+   		let mut file = match OpenOptions::new().read(true).write(false).open(path) {
+            // The `description` method of `io::Error` returns a string that
+            // describes the error
+        	Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+        	Ok(file) => file,
+    	};
+
+    	let mut file_string = String::new();
+    	match file.read_to_string(&mut file_string) {
+    		Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
+    		Ok(_) => println!("ok"),
+    	}
+
+    	let the_poll: PollRound = json::decode(&file_string).unwrap();
+    	let key_hash160 = KeyPair::address_base58(&persona.voter_keys.public);
+		let key_hashclone = key_hash160.clone();
+
+		let addresses = the_poll.return_eligibleaddresses();
+		if addresses.check_existence(key_hash160) == true {
+    		let vote = VoteRound::from_poll(the_poll.return_jsonstring(), persona);
+
+    		vote.write_vote();
+    	} else {
+    		println!("you have the wrong kind of key");
+    	}
+
+	}
+
+
 	pub fn select_answer(poll_choices: &[String]) -> i32 {
-		print!("choices are: ");
+		println!("choices are: ");
 		let mut index = 0;
 		for choice in poll_choices.iter() {
-			print!("index {:?}", choice);
+			println!("index {:?}, {:?}", index, choice);
 			index += 1;
 		}
-		print!("enter the index number of your selection");
+		println!("enter the index number of your selection");
 		let mut input2 = String::new();
     	let stdin2 = io::stdin();
     	stdin2.lock().read_line(&mut input2).unwrap();
@@ -162,7 +205,7 @@ impl VoteRound {
 
 	pub fn write_vote(&self) {
 		let mut the_home_dir = String::new();
-
+		let home_dirclone = the_home_dir.clone();
     	match env::home_dir() {
         	Some(ref p) => the_home_dir = p.display().to_string(),
         	None => println!("Impossible to get your home dir!")
@@ -174,10 +217,18 @@ impl VoteRound {
 			votehash.push(*a);
 		}
 		let hash_path = String::from_utf8(votehash).unwrap();
+
     	let path_string = String::from("/make_votes/");
-    	let path_string3 = the_home_dir + &path_string + &hash_path + &".vote".to_string();
-    	let path = Path::new(&path_string3); 
-		touch(&Path::new(path)).unwrap_or_else(|why| {
+
+    	let app_root = home_dirclone + "/make_votes/";
+    	make_app_root_dir(&app_root);
+
+    	let path_string2 = path_string + &hash_path;
+    	let path_string3 = path_string2 + ".vote";
+    	let path_string4 = the_home_dir + &path_string3;
+    	let path = Path::new(&path_string4); 
+    	println!("{:?}", path);;
+		touch(&path).unwrap_or_else(|why| {
                println!("! {:?}", why.kind());
     	}); 
 
@@ -192,6 +243,7 @@ impl VoteRound {
     	let encoded = VoteRound::return_jsonstring(self);
 		let json_str = encoded.to_string();
 		file.write_all(&encoded.as_bytes()).unwrap();
+
 	}
 
 	pub fn return_votehash(&self) -> &[u8] {
@@ -202,9 +254,6 @@ impl VoteRound {
     	let encoded = json::encode(&self).unwrap();
     	encoded
 	}
-
-
-
 	
 }
 
@@ -217,3 +266,22 @@ pub fn touch(path: &Path) -> io::Result<()> {
     }
 }
 
+pub fn make_app_root_dir(rootname: &str) {
+	let mut the_home_dir = String::new();
+
+	match env::home_dir() {
+   		Some(ref p) => the_home_dir = p.display().to_string(),
+   		None => println!("Impossible to get your home dir!")
+	}
+
+	let the_other_part = rootname;
+	let the_full_path = the_home_dir + the_other_part;
+	match fs::create_dir(&the_full_path) {
+		Err(why) => { 
+			println!("{:?}", why.kind()); 
+		},
+		Ok(_) => { 	
+			println!("making application directory"); 
+		},
+	}
+}  

@@ -23,6 +23,10 @@ name = "poll"
 path = "app/poll.rs"
 
 [[bin]]
+name = "keys"
+path = "app/keys.rs"
+
+[[bin]]
 name = "validate"
 path = "app/validate.rs"
 
