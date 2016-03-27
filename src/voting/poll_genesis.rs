@@ -2,6 +2,7 @@
 use safex::genesis::key_generation::KeyPair;
 use utils::get_address_methods::OmniList;
 use utils::get_address_methods::get_omniwalletorg;
+use utils::dirs::{make_app_root_dir, touch};
 
 use rustc_serialize::{Decodable, Decoder};
 use rustc_serialize::json::{self, ToJson, Json};
@@ -74,13 +75,13 @@ pub struct PollRound {
 
 #[derive(Clone, RustcDecodable, RustcEncodable)]
 pub struct PollHash {
-	start_block: i32,
-	end_block: i32,
-	the_terms: String,
-	responses: Vec<String>,
-	sp_num: i32,
-	origin_pub: String,
-	eligible_addresses: OmniList,
+	pub start_block: i32,
+	pub end_block: i32,
+	pub the_terms: String,
+	pub responses: Vec<String>,
+	pub sp_num: i32,
+	pub origin_pub: String,
+	pub eligible_addresses: OmniList,
 }
 
 impl PollHash {
@@ -270,9 +271,10 @@ impl PollRound {
 		poll_data
 	}
 
-	///returns the poll hash from the PollRound struct
-	pub fn return_pollhash(&self) -> &[u8] {
-		&self.poll_hash[..]
+	///returns the terms of the poll from the PollRound struct
+	pub fn return_theterms(&self) -> String {
+		let our_string = self.the_terms.to_string();
+		our_string
 	}
 
 	///returns the choices within the PollRound struct
@@ -281,9 +283,27 @@ impl PollRound {
 	}
 
 	///returns the list of eligible addresses within the PollRound struct
+	pub fn return_spnum(&self) -> i32 {
+		let mut int = 0;
+		int += self.sp_number;
+		int
+	}
+
+	///returns the poll hash from the PollRound struct
+	pub fn return_pollhash(&self) -> &[u8] {
+		&self.poll_hash[..]
+	}
+
+	///returns the poll signature from the PollRound struct
+	pub fn return_signature(&self) -> &[u8] {
+		&self.origin_signature
+	}
+
+	///returns the list of eligible addresses within the PollRound struct
 	pub fn return_eligibleaddresses(&self) -> &OmniList {
 		&self.eligible_addresses
 	}
+
 
 	///writes the poll to a file
 	pub fn write_poll(&self) {
@@ -304,7 +324,7 @@ impl PollRound {
     	let path_string = String::from("/make_polls/");
 
     	let app_root = home_dirclone + "/make_polls/";
-    	make_app_root_dir(&app_root);
+    	make_app_root_dir(app_root);
 
     	let path_string2 = path_string + &hash_path;
     	let path_string3 = path_string2 + ".poll";
@@ -328,35 +348,6 @@ impl PollRound {
 		file.write_all(&encoded.as_bytes()).unwrap();
 	}
 }
-
-pub fn touch(path: &Path) -> io::Result<()> {
-    match OpenOptions::new().write(true).read(true).create(true).open(path) {
-        Ok(_) => { 
-        	println!("making {:?}", path);
-        	Ok(()) },
-        Err(e) => Err(e),
-    }
-}
-
-pub fn make_app_root_dir(rootname: &str) {
-	let mut the_home_dir = String::new();
-
-	match env::home_dir() {
-   		Some(ref p) => the_home_dir = p.display().to_string(),
-   		None => println!("Impossible to get your home dir!")
-	}
-
-	let the_other_part = rootname;
-	let the_full_path = the_home_dir + the_other_part;
-	match fs::create_dir(&the_full_path) {
-		Err(why) => { 
-			println!("{:?}", why.kind()); 
-		},
-		Ok(_) => { 	
-			println!("making application directory"); 
-		},
-	}
-}  
 
 #[test]
 fn test() {

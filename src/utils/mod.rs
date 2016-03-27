@@ -8,3 +8,4 @@ use hyper::Client;
 use hyper::header::Connection;
 
 pub mod get_address_methods;
+pub mod dirs;

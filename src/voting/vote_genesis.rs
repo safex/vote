@@ -5,8 +5,10 @@
 
 use safex::genesis::key_generation::KeyPair;
 use utils::get_address_methods::OmniList;
+use utils::dirs::{make_app_root_dir, touch};
 
 use voting::poll_genesis::PollRound;
+use voting::validate_genesis::VotingOutcome;
 
 use rustc_serialize::{Decodable, Decoder};
 use rustc_serialize::json::{self, ToJson, Json};
@@ -93,6 +95,8 @@ impl VoteRound {
 			vote_publickey: String::new(),
 		}
 	}
+
+	///form a vote taking a poll json string, and a VotePersona
 	pub fn from_poll(poll_round: String, persona: VotePersona) -> VoteRound {
 		//get the poll's hash
 		//need to validate the poll contents as well
@@ -144,7 +148,7 @@ impl VoteRound {
 
 	}
 
-	
+	///forms a vote using a VotePersona import keys
 	pub fn form_vote() {
 		let persona = VotePersona::import_keys();
 
@@ -176,6 +180,7 @@ impl VoteRound {
 
 		let addresses = the_poll.return_eligibleaddresses();
 		if addresses.check_existence(key_hash160) == true {
+
     		let vote = VoteRound::from_poll(the_poll.return_jsonstring(), persona);
 
     		vote.write_vote();
@@ -185,7 +190,7 @@ impl VoteRound {
 
 	}
 
-
+	///helper function to accept answers from a poll through commandline by index
 	pub fn select_answer(poll_choices: &[String]) -> i32 {
 		println!("choices are: ");
 		let mut index = 0;
@@ -203,7 +208,9 @@ impl VoteRound {
     	the_index
 	}
 
+	///writes the vote to a file
 	pub fn write_vote(&self) {
+
 		let mut the_home_dir = String::new();
 		let home_dirclone = the_home_dir.clone();
     	match env::home_dir() {
@@ -221,13 +228,13 @@ impl VoteRound {
     	let path_string = String::from("/make_votes/");
 
     	let app_root = home_dirclone + "/make_votes/";
-    	make_app_root_dir(&app_root);
+    	make_app_root_dir(app_root);
 
     	let path_string2 = path_string + &hash_path;
     	let path_string3 = path_string2 + ".vote";
     	let path_string4 = the_home_dir + &path_string3;
     	let path = Path::new(&path_string4); 
-    	println!("{:?}", path);;
+    	println!("{:?}", path);
 		touch(&path).unwrap_or_else(|why| {
                println!("! {:?}", why.kind());
     	}); 
@@ -257,31 +264,5 @@ impl VoteRound {
 	
 }
 
-pub fn touch(path: &Path) -> io::Result<()> {
-    match OpenOptions::new().write(true).read(true).create(true).open(path) {
-        Ok(_) => { 
-        	println!("making {:?}", path);
-        	Ok(()) },
-        Err(e) => Err(e),
-    }
-}
 
-pub fn make_app_root_dir(rootname: &str) {
-	let mut the_home_dir = String::new();
 
-	match env::home_dir() {
-   		Some(ref p) => the_home_dir = p.display().to_string(),
-   		None => println!("Impossible to get your home dir!")
-	}
-
-	let the_other_part = rootname;
-	let the_full_path = the_home_dir + the_other_part;
-	match fs::create_dir(&the_full_path) {
-		Err(why) => { 
-			println!("{:?}", why.kind()); 
-		},
-		Ok(_) => { 	
-			println!("making application directory"); 
-		},
-	}
-}  
