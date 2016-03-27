@@ -6,6 +6,9 @@
 //and validate poll with vote 
 
 
+use utils::dirs::{make_app_root_dir, touch};
+use voting::poll_genesis::PollRound;
+
 struct VotingOutcome {
 	responses: Vec<String>,
 	tally: Vec<i32>,
@@ -20,9 +23,24 @@ impl VotingOutcome {
 	pub fn import_poll() {
 
 	}
+	fn initialize_app() {
+		let mut the_home_dir = String::new();
+    	match env::home_dir() {
+        	Some(ref p) => the_home_dir = p.display().to_string(),
+        	None => println!("Impossible to get your home dir!")
+    	}
 
+
+    	let app_root = home_dirclone + "/validate_poll/";
+    	make_app_root_dir(&app_root);
+	}
 	///grab a directory containing votes and validate them against the poll
-	pub fn import_votes() {
+	pub fn validate_poll(pollround: PollRound) {
+		//find the .poll file read and verify
+		//find the .vote files read each and tally the vote
+		
+		initialize_app();
+		
 		//iterate through the directory for all .vote files, and parse out their contents also perform validation against the poll first step is the poll import_votes
 		//then a prompt for the votes import, to be validated against the poll and against themselves
 		//so will need to import votehash etc to validate all votes entirely.
