@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/safex/vote.png?branch=master)](https://travis-ci.org/safex/vote)
-
+[![Coverage Status](https://coveralls.io/repos/ddabek/vote/badge.svg)](https://coveralls.io/r/ddabek/vote)
 # vote
 This is still under development, and should be treated as testing.
 
