@@ -1,6 +1,4 @@
 [![Build Status](https://travis-ci.org/safex/vote.png?branch=master)](https://travis-ci.org/safex/vote)
-[![Coverage Status](https://coveralls.io/repos/github/ddabek/vote/badge.svg?branch=master)](https://coveralls.io/github/ddabek/vote?branch=master)
-# vote
 This is still under development, and should be treated as testing.
 
 ##### Install Rust Ubuntu 14.04, 15.04, 15.10
