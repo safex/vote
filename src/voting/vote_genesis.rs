@@ -8,6 +8,7 @@ use utils::get_address_methods::OmniList;
 use utils::dirs::{make_app_root_dir, touch};
 
 use voting::poll_genesis::PollRound;
+use voting::validate_genesis::VotingOutcome;
 
 use rustc_serialize::{Decodable, Decoder};
 use rustc_serialize::json::{self, ToJson, Json};
@@ -94,6 +95,8 @@ impl VoteRound {
 			vote_publickey: String::new(),
 		}
 	}
+
+	///form a vote taking a poll json string, and a VotePersona
 	pub fn from_poll(poll_round: String, persona: VotePersona) -> VoteRound {
 		//get the poll's hash
 		//need to validate the poll contents as well
@@ -145,7 +148,7 @@ impl VoteRound {
 
 	}
 
-	
+	///forms a vote using a VotePersona import keys
 	pub fn form_vote() {
 		let persona = VotePersona::import_keys();
 
@@ -177,6 +180,7 @@ impl VoteRound {
 
 		let addresses = the_poll.return_eligibleaddresses();
 		if addresses.check_existence(key_hash160) == true {
+
     		let vote = VoteRound::from_poll(the_poll.return_jsonstring(), persona);
 
     		vote.write_vote();
@@ -186,7 +190,7 @@ impl VoteRound {
 
 	}
 
-
+	///helper function to accept answers from a poll through commandline by index
 	pub fn select_answer(poll_choices: &[String]) -> i32 {
 		println!("choices are: ");
 		let mut index = 0;
@@ -204,7 +208,9 @@ impl VoteRound {
     	the_index
 	}
 
+	///writes the vote to a file
 	pub fn write_vote(&self) {
+
 		let mut the_home_dir = String::new();
 		let home_dirclone = the_home_dir.clone();
     	match env::home_dir() {
@@ -222,13 +228,13 @@ impl VoteRound {
     	let path_string = String::from("/make_votes/");
 
     	let app_root = home_dirclone + "/make_votes/";
-    	make_app_root_dir(&app_root);
+    	make_app_root_dir(app_root);
 
     	let path_string2 = path_string + &hash_path;
     	let path_string3 = path_string2 + ".vote";
     	let path_string4 = the_home_dir + &path_string3;
     	let path = Path::new(&path_string4); 
-    	println!("{:?}", path);;
+    	println!("{:?}", path);
 		touch(&path).unwrap_or_else(|why| {
                println!("! {:?}", why.kind());
     	}); 

@@ -30,7 +30,7 @@ pub fn read_directory(path: &Path) -> Vec<String> {
 }
 
 
-pub fn make_app_root_dir(rootname: &str) {
+pub fn make_app_root_dir(rootname: String) {
 	let mut the_home_dir = String::new();
 
 	match env::home_dir() {
@@ -39,7 +39,7 @@ pub fn make_app_root_dir(rootname: &str) {
 	}
 
 	let the_other_part = rootname;
-	let the_full_path = the_home_dir + the_other_part;
+	let the_full_path = the_home_dir + &the_other_part;
 	match fs::create_dir(&the_full_path) {
 		Err(why) => { 
 			println!("{:?}", why.kind()); 
