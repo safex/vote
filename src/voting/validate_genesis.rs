@@ -6,13 +6,23 @@
 //and validate poll with vote 
 
 
-use utils::dirs::{make_app_root_dir, touch};
+use utils::dirs::{make_app_root_dir, touch, return_dirpaths};
 use voting::poll_genesis::{PollRound, PollHash};
+use voting::vote_genesis::{VoteRound, VoteHash};
 use utils::get_address_methods::{OmniList};
 
 use safex::genesis::key_generation::KeyPair;
-use std::env;
 
+use std::env;
+use std::error::Error;
+use std::fs;
+use std::fs::File;
+use std::path::Path;
+use std::io::Write;
+use std::io;
+use std::fs::OpenOptions;
+use std::io::Read;
+use std::io::{BufRead};
 
 pub struct VotingOutcome {
 	responses: Vec<String>,
@@ -29,7 +39,7 @@ impl VotingOutcome {
 
 	}
 	///grab a directory containing votes and validate them against the poll
-	pub fn validate_outcome(pollround: PollRound) {
+	pub fn validate_outcome() {
 		//find the .poll file read and verify
 		//find the .vote files read each and tally the vote
 		let mut the_home_dir = String::new();
@@ -42,7 +52,18 @@ impl VotingOutcome {
     	let app_root: String = the_path1.to_string();
     	make_app_root_dir(app_root);
 
+    	//read poll 
 
+    	println!("please enter path to the directory where reside the one poll and all supposed votes");
+		let mut path = String::new();
+    	let stdin = io::stdin();
+    	stdin.lock().read_line(&mut path).unwrap();
+    	let path_trim = path.trim_right_matches("\n");
+
+    	let path = Path::new(&path_trim);
+
+    	let all_paths = return_dirpaths(&path);
+    	//read all votes
 		
 		//iterate through the directory for all .vote files, and parse out their contents also perform validation against the poll first step is the poll import_votes
 		//then a prompt for the votes import, to be validated against the poll and against themselves
@@ -107,6 +128,64 @@ impl VotingOutcome {
 		}
 
 		let sig_verification = KeyPair::verify(&origin_key, the_sigclone, clone_duphash.into_bytes());
+		if sig_verification == true {
+			println!("all good here");
+			return true;
+		} else {
+			println!("signature error");
+			return false;
+		}
+	}
+
+	pub fn vote_check(voteround: String) -> bool {
+		let vote = VoteRound::vote_fromjson(voteround);
+		let vote_hash = vote.return_votehash();
+		let mut votehash: Vec<u8> = Vec::new();
+		for a in vote_hash.iter() {
+
+			votehash.push(*a);
+		}
+
+		let votehash_clone = votehash.clone();
+		let votehash_clone2 = votehash.clone();
+		let poll_hash = vote.return_votehash();
+		let mut pollhash: Vec<u8> = Vec::new();
+		for a in poll_hash.iter() {
+
+			pollhash.push(*a);
+		}
+
+		let pollhash_clone = pollhash.clone();
+		let pollhash_clone2 = pollhash.clone();
+
+		let vote_msg = vote.return_votemsg();
+		let vote_index = vote.return_voteindex();
+
+		let sig = vote.return_signature();
+		let mut signa: Vec<u8> = Vec::new();
+		for a in sig.iter() {
+
+			signa.push(*a);
+		}
+		let the_sigclone = signa.clone();
+
+		let origin_key = KeyPair::recover(signa, votehash_clone);
+		let hash160 = KeyPair::address_base58(&origin_key);
+		let vote_hash_elem = VoteHash {
+			poll_hash: pollhash_clone,
+			vote_message: vote_msg,
+			vote_msgindex: vote_index,
+			vote_publickey: hash160,
+		};
+		let vote_ahash = vote_hash_elem.return_hash();
+		let vote_hashclone3 = vote_ahash.clone();
+		if vote_ahash.into_bytes() == votehash_clone2 {
+			println!("true");
+		} else {
+			println!("something is not right here");
+			return false;
+		}
+		let sig_verification = KeyPair::verify(&origin_key, the_sigclone, vote_hashclone3.into_bytes());
 		if sig_verification == true {
 			println!("all good here");
 			return true;

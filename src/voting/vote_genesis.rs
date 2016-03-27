@@ -58,10 +58,10 @@ impl VotePersona {
 
 #[derive(Clone, RustcDecodable, RustcEncodable)]
 pub struct VoteHash {
-	poll_hash: Vec<u8>,
-	vote_message: String,
-	vote_msgindex: i32,
-	vote_publickey: String,
+	pub poll_hash: Vec<u8>,
+	pub vote_message: String,
+	pub vote_msgindex: i32,
+	pub vote_publickey: String,
 }
 
 impl VoteHash {
@@ -253,15 +253,45 @@ impl VoteRound {
 
 	}
 
-	pub fn return_votehash(&self) -> &[u8] {
-		&self.vote_hash[..]
-	}
-
+	///returns a json encoded string from the VoteRound struct
 	pub fn return_jsonstring(&self) -> String {
     	let encoded = json::encode(&self).unwrap();
     	encoded
 	}
+
+	///returns a VoteRound struct based on a json encoded string
+	pub fn vote_fromjson(json: String) -> VoteRound {
+		let vote_data: VoteRound = json::decode(&json).unwrap();
+		vote_data
+	}
+
+	///returns the vote hash from the VoteRound struct
+	pub fn return_votehash(&self) -> &[u8] {
+		&self.vote_hash[..]
+	}
+
+	///returns the poll hash from the VoteRound struct
+	pub fn return_pollhash(&self) -> &[u8] {
+		&self.poll_hash[..]
+	}
+
+	///returns the signature from the VoteRound struct
+	pub fn return_signature(&self) -> &[u8] {
+		&self.vote_signature
+	}
+
+	///returns the string of the vote answer from the poll
+	pub fn return_votemsg(&self) -> String {
+		let our_string = self.vote_message.to_string();
+		our_string
+	}
 	
+	///returns the index of the vote as per the poll
+	pub fn return_voteindex(&self) -> i32 {
+		let mut int = 0;
+		int += self.vote_msgindex;
+		int
+	}
 }
 
 

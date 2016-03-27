@@ -19,7 +19,7 @@ pub fn touch(path: &Path) -> io::Result<()> {
     }
 }
 
-pub fn read_directory(path: &Path) -> Vec<String> {
+pub fn return_dirpaths(path: &Path) -> Vec<String> {
 	let paths = fs::read_dir(path).unwrap();
 	let mut the_paths = Vec::new();
    	for path in paths {

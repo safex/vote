@@ -294,7 +294,7 @@ impl PollRound {
 		&self.poll_hash[..]
 	}
 
-	///returns the poll signature from the PollRound struct
+	///returns the signature from the PollRound struct
 	pub fn return_signature(&self) -> &[u8] {
 		&self.origin_signature
 	}
