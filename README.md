@@ -21,7 +21,14 @@ brew install multirust
 # install stable and make it default
 multirust update stable && multirust default stable
 ```
+#### Validate a poll with votes in one directory
 
+```bash
+# download and build safex/vote
+git clone https://github.com/safex/vote
+cd vote
+cargo run --bin validate
+```
 
 #### Forming a poll with safex/vote
 
