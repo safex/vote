@@ -39,20 +39,20 @@ pub struct VotePiece {
 }
 
 impl VotingOutcome {
-	///grab the contents of a poll from a file
-	pub fn import_poll() {
-
-	}
 	///grab a directory containing votes and validate them against the poll
 	pub fn validate_outcome() -> bool {
 		//find the .poll file read and verify
 		//find the .vote files read each and tally the vote
-		let mut home_dir = String::new();
+		let mut the_home_dir = String::new();
+		let home_dirclone = the_home_dir.clone();
     	match env::home_dir() {
-        	Some(ref p) => home_dir = p.display().to_string(),
+        	Some(ref p) => the_home_dir = p.display().to_string(),
         	None => println!("Impossible to get your home dir!")
     	}
-		let app_root = home_dir + "/validate_polls/";
+    	
+
+
+    	let app_root = home_dirclone + "/make_valid/";
     	make_app_root_dir(app_root);
 
     	//read poll 
