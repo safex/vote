@@ -259,6 +259,26 @@ impl PollRound {
 		//answer questions
 	}
 
+	///returns a PollRound from a file path
+	pub fn return_pollfromfile(path: &Path) -> PollRound {
+		let display = "a";
+   		let mut file = match OpenOptions::new().read(true).write(false).open(path) {
+            // The `description` method of `io::Error` returns a string that
+            // describes the error
+        	Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+        	Ok(file) => file,
+    	};
+
+    	let mut file_string = String::new();
+    	match file.read_to_string(&mut file_string) {
+    		Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
+    		Ok(_) => println!("ok"),
+    	}
+
+    	let the_poll: PollRound = json::decode(&file_string).unwrap();
+    	the_poll
+	}
+
 	///returns a json encoded string from the PollRound struct
 	pub fn return_jsonstring(&self) -> String {
     	let encoded = json::encode(&self).unwrap();

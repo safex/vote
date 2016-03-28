@@ -4,12 +4,19 @@ use vote::utils::get_address_methods::get_omniwalletorg;
 use vote::utils::get_address_methods::OmniList;
 use vote::voting::poll_genesis::{PollRound, PollHash, PollPersona};
 use vote::voting::vote_genesis::{VoteRound};
+use vote::voting::validate_genesis::{VotingOutcome};
 
 use safex::genesis::key_generation::KeyPair;
 
 fn main() {
-    VoteRound::form_vote();
     //PollRound::make_poll();
+    //VoteRound::form_vote();
+    println!("{:?}", VotingOutcome::validate_outcome());
+
+
+
+
+
 /*
     let the_keys = KeyPair::create().unwrap();
     let omni_list = get_omniwalletorg(56);

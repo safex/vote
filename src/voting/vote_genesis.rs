@@ -75,12 +75,12 @@ impl VoteHash {
 
 #[derive(RustcDecodable, RustcEncodable)]
 pub struct VoteRound {
-	poll_hash: Vec<u8>,
-	vote_hash: Vec<u8>,
-	vote_message: String,
-	vote_msgindex: i32,
-	vote_signature: Vec<u8>,
-	vote_publickey: String,
+	pub poll_hash: Vec<u8>,
+	pub vote_hash: Vec<u8>,
+	pub vote_message: String,
+	pub vote_msgindex: i32,
+	pub vote_signature: Vec<u8>,
+	pub vote_publickey: String,
 }
 
 
@@ -291,6 +291,32 @@ impl VoteRound {
 		let mut int = 0;
 		int += self.vote_msgindex;
 		int
+	}
+
+	///returns the index of the vote as per the poll
+	pub fn return_votecount(&self, list: &OmniList) -> i32 {
+		list.return_balance(self.vote_publickey.to_string())
+
+	}
+
+	///returns a VoteRound from a file path
+	pub fn return_votefromfile(path: &Path) -> VoteRound {
+		let display = "a";
+   		let mut file = match OpenOptions::new().read(true).write(false).open(path) {
+            // The `description` method of `io::Error` returns a string that
+            // describes the error
+        	Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+        	Ok(file) => file,
+    	};
+
+    	let mut file_string = String::new();
+    	match file.read_to_string(&mut file_string) {
+    		Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
+    		Ok(_) => println!("ok"),
+    	}
+
+    	let the_vote: VoteRound = json::decode(&file_string).unwrap();
+    	the_vote
 	}
 }
 
