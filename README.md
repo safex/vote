@@ -21,7 +21,7 @@ brew install multirust
 # install stable and make it default
 multirust update stable && multirust default stable
 ```
-#### Validate a poll with votes in one directory
+#### Validate a poll with votes in same directory
 
 ```bash
 # download and build safex/vote
@@ -30,7 +30,7 @@ cd vote
 cargo run --bin validate
 ```
 
-#### Forming a poll with safex/vote
+#### Forming a poll
 
 ```bash
 # download and build safex/vote
@@ -39,7 +39,7 @@ cd vote
 cargo run --bin poll
 ```
 
-#### Voting on a poll with safex/vote
+#### Voting on a poll
 
 ```bash
 # download and build safex/vote
@@ -49,7 +49,7 @@ cargo run --bin vote
 ```
 
 
-#### Generate random base64 private bitcoin and public key pair with safex
+#### Generate random base64 private bitcoin and public key pair
 
 ```bash
 # download and build safex/vote
