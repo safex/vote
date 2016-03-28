@@ -111,15 +111,15 @@ impl VotingOutcome {
     			for path in vote_paths {
 
     				let voter = VoteRound::return_votefromfile(Path::new(&path));
-    				let vote_jsonstr = vote.return_jsonstring();
+    				let vote_jsonstr = voter.return_jsonstring();
     				let vote_check = VotingOutcome::vote_check(vote_jsonstr);
     				if vote_check == true {
-    					let vote_hash = vote.return_votehash();
-    					let vote_pubclone = vote.vote_publickey.clone();
-    					let vote_pubclone1 = vote.vote_publickey.clone();
+    					let vote_hash = voter.return_votehash();
+    					let vote_pubclone = voter.vote_publickey.clone();
+    					let vote_pubclone1 = voter.vote_publickey.clone();
     					let vote_count = omni_list.return_balance(vote_pubclone1);
     					the_tallybalance.push(vote_count);
-    					the_tally.push(vote.vote_message.to_string());
+    					the_tally.push(voter.vote_message.to_string());
     					let vote_address = vote_pubclone.to_string();
     					let the_piece = VotePiece {
 							vote_hash: vote_hash.to_vec(),
@@ -243,7 +243,7 @@ impl VotingOutcome {
 
 		let votehash_clone = votehash.clone();
 		let votehash_clone2 = votehash.clone();
-		let poll_hash = vote.return_votehash();
+		let poll_hash = vote.return_pollhash();
 		let mut pollhash: Vec<u8> = Vec::new();
 		for a in poll_hash.iter() {
 
