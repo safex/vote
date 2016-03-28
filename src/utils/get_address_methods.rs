@@ -60,6 +60,16 @@ impl OmniList {
         omni_data
     }
 
+    ///returns the balance of an address from the list
+    pub fn return_balance(&self, add: String) -> i32 {
+        let mut int = 0;
+        for data in &self.address_list {
+            if add == data.address {
+                int += data.balance
+            }
+        }
+        int
+    }
 }
 
 pub fn get_omniwalletorg(spindex: i32) -> OmniList {
