@@ -31,7 +31,7 @@ impl PollPersona {
 	pub fn import_keys() -> PollPersona {
 		println!("input your private key");
 		let mut input2 = String::new();
-    	let stdin2 = io::stdin();
+		let stdin2 = io::stdin();
     	stdin2.lock().read_line(&mut input2).unwrap();
 
     	let trimmed = input2.trim_right_matches("\n");
@@ -111,7 +111,14 @@ impl PollRound {
 
 
 	///forms a new PollRound with the parameters specified
-	pub fn new_wparams(the_terms: String, start_block: i32, end_block: i32, responses: Vec<String>, sp_num: i32, keys: &KeyPair, elig_address: OmniList) -> PollRound {
+	pub fn new_wparams(
+		the_terms: String, 
+		start_block: i32, 
+		end_block: i32, 
+		responses: Vec<String>, 
+		sp_num: i32, 
+		keys: &KeyPair, 
+		elig_address: OmniList) -> PollRound {
 		
 		let key_hash160 = KeyPair::address_base58(&keys.public);
 		let elig_checkclone = elig_address.clone();

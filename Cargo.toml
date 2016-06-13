@@ -30,9 +30,16 @@ path = "app/keys.rs"
 name = "validate"
 path = "app/validate.rs"
 
+[[bin]]
+name = "proposalservice"
+path = "app/proposalserver.rs"
+
 [dependencies]
 rustc-serialize = "0.3.18"
 hyper = "0.6.16"
+iron = "0.3.0"
+rand = "0.3.14"
+router = "*"
 
 [dependencies.safex]
 git = "https://github.com/safex/safex"
