@@ -96,52 +96,111 @@ impl VoteRound {
 		}
 	}
 
+	pub fn vote_newparam(
+		poll_round: String,
+		keys: &KeyPair,
+		vote_msgindex: i32) -> VoteRound {
+
+		let the_poll_clone = poll_round.clone();
+
+		let poll = PollRound::poll_fromjson(the_poll_clone);
+    	let key_hash160 = KeyPair::address_base58(&keys.public);
+		let addresses = poll.return_eligibleaddresses();
+		if addresses.check_existence(key_hash160) == true {
+			let poll = PollRound::poll_fromjson(poll_round);
+			let poll_hash = poll.return_pollhash();
+			let mut pollhash: Vec<u8> = Vec::new();
+			for a in poll_hash.iter() {
+
+				pollhash.push(*a);
+			}
+
+			let pollhash_clone = pollhash.clone();
+
+			let poll_choices = poll.return_pollchoices();
+
+			let vote_string = poll_choices[vote_msgindex as usize].to_string();
+			let vstring_clone = vote_string.clone();
+
+			let pk_string = KeyPair::address_base58(&keys.public);
+			let pkstr_clone = pk_string.clone();
+
+			let vote_hash = VoteHash {
+				poll_hash: pollhash,
+				vote_message: vote_string,
+				vote_msgindex: vote_msgindex,
+				vote_publickey: pk_string,
+			};
+
+			let vote_hash = vote_hash.return_hash();
+			let vhash_clone = vote_hash.clone();
+
+
+			let vote_signature = KeyPair::sign(&keys.secret, vote_hash.into_bytes());
+
+			let the_vote = VoteRound {
+				poll_hash: pollhash_clone,
+				vote_hash: vhash_clone.into_bytes(),
+				vote_message: vstring_clone,
+				vote_msgindex: vote_msgindex,
+				vote_signature: vote_signature,
+				vote_publickey: pkstr_clone,
+			};
+			the_vote
+		} else {
+			VoteRound::new()
+		}
+	}
+
 	///form a vote taking a poll json string, and a VotePersona
 	pub fn from_poll(poll_round: String, persona: VotePersona) -> VoteRound {
 		//get the poll's hash
 		//need to validate the poll contents as well
+
+
 		
-		let poll = PollRound::poll_fromjson(poll_round);
-		let poll_hash = poll.return_pollhash();
-		let mut pollhash: Vec<u8> = Vec::new();
-		for a in poll_hash.iter() {
+			let poll = PollRound::poll_fromjson(poll_round);
+			let poll_hash = poll.return_pollhash();
+			let mut pollhash: Vec<u8> = Vec::new();
+			for a in poll_hash.iter() {
 
-			pollhash.push(*a);
-		}
+				pollhash.push(*a);
+			}
 
-		let pollhash_clone = pollhash.clone();
+			let pollhash_clone = pollhash.clone();
 
-		let poll_choices = poll.return_pollchoices();
+			let poll_choices = poll.return_pollchoices();
 
-		let vote_index = VoteRound::select_answer(poll_choices);
-		let vote_string = poll_choices[vote_index as usize].to_string();
-		let vstring_clone = vote_string.clone();
+			let vote_index = VoteRound::select_answer(poll_choices);
+			let vote_string = poll_choices[vote_index as usize].to_string();
+			let vstring_clone = vote_string.clone();
 
-		let keys = persona.voter_keys;
+			let keys = persona.voter_keys;
 
-		let pk_string = KeyPair::address_base58(&keys.public);
-		let pkstr_clone = pk_string.clone();
+			let pk_string = KeyPair::address_base58(&keys.public);
+			let pkstr_clone = pk_string.clone();
 
-		let vote_hash = VoteHash {
-			poll_hash: pollhash,
-			vote_message: vote_string,
-			vote_msgindex: vote_index,
-			vote_publickey: pk_string,
-		};
-		let vote_hash = vote_hash.return_hash();
-		let vhash_clone = vote_hash.clone();
+			let vote_hash = VoteHash {
+				poll_hash: pollhash,
+				vote_message: vote_string,
+				vote_msgindex: vote_index,
+				vote_publickey: pk_string,
+			};
+			let vote_hash = vote_hash.return_hash();
+			let vhash_clone = vote_hash.clone();
 
-		let vote_signature = KeyPair::sign(&keys.secret, vote_hash.into_bytes());
+			let vote_signature = KeyPair::sign(&keys.secret, vote_hash.into_bytes());
 
-		let the_vote = VoteRound {
-			poll_hash: pollhash_clone,
-			vote_hash: vhash_clone.into_bytes(),
-			vote_message: vstring_clone,
-			vote_msgindex: vote_index,
-			vote_signature: vote_signature,
-			vote_publickey: pkstr_clone,
-		};
-		the_vote
+			let the_vote = VoteRound {
+				poll_hash: pollhash_clone,
+				vote_hash: vhash_clone.into_bytes(),
+				vote_message: vstring_clone,
+				vote_msgindex: vote_index,
+				vote_signature: vote_signature,
+				vote_publickey: pkstr_clone,
+			};
+			the_vote
+		
 
 		//let poll_data: PollRound = json::decode(&poll_round).unwrap();
 		//let poll_hash = 

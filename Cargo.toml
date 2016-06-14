@@ -32,7 +32,7 @@ path = "app/validate.rs"
 
 [[bin]]
 name = "proposalservice"
-path = "app/proposalserver.rs"
+path = "app/proposalservice.rs"
 
 [dependencies]
 rustc-serialize = "0.3.18"

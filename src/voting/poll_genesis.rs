@@ -53,6 +53,7 @@ impl PollPersona {
 
 #[derive(Debug, RustcDecodable, RustcEncodable)]
 pub struct PollRound {
+	title: String,
 	//when the voting round begins
 	start_blockheight: i32,
 	//when the voting round ends
@@ -75,6 +76,7 @@ pub struct PollRound {
 
 #[derive(Clone, RustcDecodable, RustcEncodable)]
 pub struct PollHash {
+	pub title: String,
 	pub start_block: i32,
 	pub end_block: i32,
 	pub the_terms: String,
@@ -97,6 +99,7 @@ impl PollRound {
 	///forms a new PollRound object with 0 or empty parameters
 	pub fn new() -> PollRound {
 		PollRound {
+			title: String::new(),
 			start_blockheight: 0,
 			end_blockheight: 0,
 			the_terms: String::new(),
@@ -112,6 +115,7 @@ impl PollRound {
 
 	///forms a new PollRound with the parameters specified
 	pub fn new_wparams(
+		title: String,
 		the_terms: String, 
 		start_block: i32, 
 		end_block: i32, 
@@ -120,6 +124,7 @@ impl PollRound {
 		keys: &KeyPair, 
 		elig_address: OmniList) -> PollRound {
 		
+		let title_clone = title.clone();
 		let key_hash160 = KeyPair::address_base58(&keys.public);
 		let elig_checkclone = elig_address.clone();
 		let eligible_clone = elig_address.clone();
@@ -129,6 +134,7 @@ impl PollRound {
 			let the_responseclone = responses.clone();
 			let terms_clone = the_terms.clone();
 			let the_pollhash_elems = PollHash {
+				title: title,
 				start_block: start_block,
 				end_block: end_block,
 				the_terms: the_terms,
@@ -141,6 +147,7 @@ impl PollRound {
 			let poll_hashclone = the_pollhash.clone();
 			let poll_hash_sig = KeyPair::sign(&keys.secret, the_pollhash.into_bytes());
 			let the_poll = PollRound {
+				title: title_clone,
 				start_blockheight: start_block,
 				//when the voting round ends
 				end_blockheight: end_block,
@@ -161,8 +168,9 @@ impl PollRound {
 			};
 			the_poll
 		} else {
-			print!("ineligible address attempting to make a poll, you need some coins first");
+			println!("ineligible address attempting to make a poll, you need some coins first");
 			PollRound {
+				title: String::new(),
 				start_blockheight: 0,
 				end_blockheight: 0,
 				the_terms: String::new(),
@@ -194,6 +202,15 @@ impl PollRound {
 		let key_hashclone2 = key_hash160.clone();
 		if omni_list.check_existence(key_hash160) == true {
 			println!("you're going to form a poll");
+			println!("please give the title that you will suggest in your poll");
+			let mut title_in = String::new();
+    		let stdin3 = io::stdin();
+    		stdin3.lock().read_line(&mut title_in).unwrap();
+    		let title_trim = title_in.trim_right_matches("\n");
+
+			let title_inclone = title_trim.clone();
+			let title_inclone2 = title_trim.clone();
+
 			println!("please state the terms that you will suggest in your poll");
 			let mut terms_in = String::new();
     		let stdin2 = io::stdin();
@@ -223,6 +240,7 @@ impl PollRound {
     		let mut response_clone = response_vec.clone();
     		println!("making poll hash");
     		let the_pollhash_elems = PollHash {
+    			title: title_inclone.to_string(),
 				start_block: 0,
 				end_block: 0,
 				the_terms: terms_inclone.to_string(),
@@ -237,6 +255,7 @@ impl PollRound {
 			let poll_hash_sig = KeyPair::sign(&our_persona.poller_keys.secret, the_pollhash.into_bytes());
     		println!("signed poll hash");
 			let the_poll = PollRound {
+    			title: title_inclone2.to_string(),
 				start_blockheight: 0,
 				//when the voting round ends
 				end_blockheight: 0,
@@ -296,6 +315,12 @@ impl PollRound {
 	pub fn poll_fromjson(json: String) -> PollRound {
 		let poll_data: PollRound = json::decode(&json).unwrap();
 		poll_data
+	}
+
+	///returns the title of the poll from the PollRound struct
+	pub fn return_thetitle(&self) -> String {
+		let our_string = self.title.to_string();
+		our_string
 	}
 
 	///returns the terms of the poll from the PollRound struct

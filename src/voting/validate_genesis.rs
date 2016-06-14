@@ -186,6 +186,8 @@ impl VotingOutcome {
 		let poll_terms = poll.return_theterms();
 		let mut terms_str = String::from(poll_terms);
 
+		let poll_title = poll.return_thetitle();
+		let mut title_str = String::from(poll_title);
 
 		let sp_nu = poll.return_spnum();
 
@@ -205,6 +207,7 @@ impl VotingOutcome {
 		let omnilist = OmniList::omnilist_fromjson(omnijson);
 
 		let the_pollhash_elems = PollHash {
+			title: title_str,
 			start_block: 0,
 			end_block: 0,
 			the_terms: terms_str,
