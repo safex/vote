@@ -406,5 +406,5 @@ fn test() {
 	use utils::get_address_methods::get_omniwalletorg;
 	let the_keys = KeyPair::create().unwrap();
 	let omni_list = get_omniwalletorg(56);
-	PollRound::new_wparams("hello".to_string(), 1, 2, vec!["hello".to_string(), "goodbye".to_string()], 3, &the_keys, omni_list);
+	PollRound::new_wparams("title".to_string(), "hello".to_string(), 1, 2, vec!["hello".to_string(), "goodbye".to_string()], 3, &the_keys, omni_list);
 }
