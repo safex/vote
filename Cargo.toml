@@ -15,7 +15,7 @@ name = "vote"
 src = "src/lib.rs"
 
 [[bin]]
-name = "vote"
+name = "voter"
 path = "app/vote.rs"
 
 [[bin]]
