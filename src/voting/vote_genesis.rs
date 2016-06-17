@@ -44,7 +44,7 @@ impl VotePersona {
     	persona
 	}
 	pub fn persona_fromstring(secret: String) -> VotePersona {
-		let new_keys = KeyPair::keypair_frombase64(secret);
+		let new_keys = KeyPair::keypair_frombase58wif(secret);
 		let votings = VoteRound::new();
 		VotePersona {
 			voter_keys: new_keys,
