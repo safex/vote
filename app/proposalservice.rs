@@ -4,6 +4,10 @@ extern crate router;
 extern crate rustc_serialize;
 extern crate safex;
 extern crate vote;
+extern crate hyper;
+
+
+
 
 
 use safex::genesis::key_generation::KeyPair;
@@ -15,8 +19,9 @@ use vote::utils::get_address_methods::get_omniwalletorg;
 
 use iron_cors::CORS;
 use iron::prelude::*;
-use iron::status;
+use iron::{status, headers};
 use iron::method::Method;
+use iron::modifiers::Header;
 use router::Router;
 use rustc_serialize::json;
 use std::io::Read;
@@ -92,7 +97,10 @@ fn main() {
 		request.body.read_to_string(&mut payload).unwrap();
 		let import_hold: Import = json::decode(&payload).unwrap();
 		*key = KeyPair::keypair_frombase58wif(import_hold.wif);
-		Ok(Response::with((status::Ok, "we got this")))
+		let mut response = Response::with((status::Ok));
+		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+		//resp.headers.set();
+		Ok(response)
 	}
 
 	///sets the proposal that will be voted on
@@ -134,12 +142,6 @@ fn main() {
 		Ok(Response::with((status::Ok, payload)))
 	}
 
-	let cors = CORS::new(vec![
-         (vec![Method::Get, Method::Post], "test".to_owned())
-    ]);
-
-    let mut chain = Chain::new(router);
-    chain.link_after(cors);
 
 	//store the key here in a variable
 
@@ -150,7 +152,7 @@ fn main() {
 	//finally make a vote - open directory maker to select where to save the vote file.
 
 
-    Iron::new(chain).http("localhost:3000").unwrap();
+    Iron::new(router).http("localhost:3000").unwrap();
 }
 
 
