@@ -1,4 +1,5 @@
 extern crate iron;
+extern crate iron_cors;
 extern crate router;
 extern crate rustc_serialize;
 extern crate safex;
@@ -12,9 +13,10 @@ use vote::voting::vote_genesis::{VoteRound};
 use vote::utils::get_address_methods::OmniList;
 use vote::utils::get_address_methods::get_omniwalletorg;
 
-
+use iron_cors::CORS;
 use iron::prelude::*;
 use iron::status;
+use iron::method::Method;
 use router::Router;
 use rustc_serialize::json;
 use std::io::Read;
@@ -77,7 +79,7 @@ fn main() {
 	router.get("/getproposal", move |r: &mut Request| get_proposal(r, &prop_clone2.lock().unwrap()));
 
 
-
+	///returns the base58 address corresponding to imported WIF 
 	fn get_pub(_: &mut Request, key: &KeyPair) -> IronResult<Response> {
 		let pub_key = KeyPair::address_base58(&key.public);
         let payload = json::encode(&pub_key).unwrap();
@@ -90,7 +92,7 @@ fn main() {
 		request.body.read_to_string(&mut payload).unwrap();
 		let import_hold: Import = json::decode(&payload).unwrap();
 		*key = KeyPair::keypair_frombase58wif(import_hold.wif);
-		Ok(Response::with(status::Ok))
+		Ok(Response::with((status::Ok, "we got this")))
 	}
 
 	///sets the proposal that will be voted on
@@ -132,6 +134,12 @@ fn main() {
 		Ok(Response::with((status::Ok, payload)))
 	}
 
+	let cors = CORS::new(vec![
+         (vec![Method::Get, Method::Post], "test".to_owned())
+    ]);
+
+    let mut chain = Chain::new(router);
+    chain.link_after(cors);
 
 	//store the key here in a variable
 
@@ -142,7 +150,7 @@ fn main() {
 	//finally make a vote - open directory maker to select where to save the vote file.
 
 
-    Iron::new(router).http("localhost:3000").unwrap();
+    Iron::new(chain).http("localhost:3000").unwrap();
 }
 
 
