@@ -97,6 +97,7 @@ fn main() {
 		request.body.read_to_string(&mut payload).unwrap();
 		let import_hold: Import = json::decode(&payload).unwrap();
 		*key = KeyPair::keypair_frombase58wif(import_hold.wif);
+		
 		let mut response = Response::with((status::Ok, "all good here"));
 		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
 		println!("hit the server");
@@ -108,7 +109,11 @@ fn main() {
 		let mut payload = String::new();
 		request.body.read_to_string(&mut payload).unwrap();
 		*proposal = json::decode(&payload).unwrap();
-		Ok(Response::with(status::Ok))
+
+		let mut response = Response::with((status::Ok, "all good here"));
+		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+		println!("hit the server");
+		Ok(response)
 	}
 
 	///forms a vote based on the set proposal
@@ -117,7 +122,11 @@ fn main() {
 		request.body.read_to_string(&mut payload).unwrap();
 		let vote_index: PartialVote = json::decode(&payload).unwrap();
 		*vote = VoteRound::vote_newparam(proposal.return_jsonstring(), key, vote_index.vote_index);
-		Ok(Response::with(status::Ok))
+
+		let mut response = Response::with((status::Ok, "all good here"));
+		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+		println!("hit the server");
+		Ok(response)
 	}
 
 	///reads back the set vote
@@ -133,7 +142,11 @@ fn main() {
 		let partial_prop: PartialProposal = json::decode(&payload).unwrap();
 		let omnis = get_omniwalletorg(56);
 		*prop = PollRound::new_wparams(partial_prop.title, partial_prop.terms, 0, 0, partial_prop.choices, 56, keys, omnis);
-		Ok(Response::with(status::Ok))
+
+		let mut response = Response::with((status::Ok, "all good here"));
+		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+		println!("hit the server");
+		Ok(response)
 	}
 
 	///return new made proposal
