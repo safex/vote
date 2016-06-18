@@ -97,9 +97,9 @@ fn main() {
 		request.body.read_to_string(&mut payload).unwrap();
 		let import_hold: Import = json::decode(&payload).unwrap();
 		*key = KeyPair::keypair_frombase58wif(import_hold.wif);
-		let mut response = Response::with((status::Ok));
+		let mut response = Response::with((status::Ok, "all good here"));
 		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
-		//resp.headers.set();
+		println!("hit the server");
 		Ok(response)
 	}
 
