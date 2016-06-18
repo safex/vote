@@ -60,6 +60,7 @@ fn main() {
 	let place_poll = PollRound::new();
 	let the_poll = Arc::new(Mutex::new(place_poll));
 	let poll_clone = the_poll.clone();
+	let poll_clone2 = the_poll.clone();
 
 	let place_vote = VoteRound::new();
 	let the_vote = Arc::new(Mutex::new(place_vote));
@@ -79,6 +80,7 @@ fn main() {
 	router.get("/getvote", move |r: &mut Request| get_vote(r, &the_vote.lock().unwrap()));
 
 	router.post("/setproposal", move |r: &mut Request| set_proposal(r, &mut poll_clone.lock().unwrap()));
+	router.get("/getsetproposal", move |r: &mut Request| get_proposal(r, &poll_clone2.lock().unwrap()));
 
 	router.post("/makeproposal", move |r: &mut Request| make_set_proposal(r, &mut prop_clone.lock().unwrap(), &key_clone3.lock().unwrap()));
 	router.get("/getproposal", move |r: &mut Request| get_proposal(r, &prop_clone2.lock().unwrap()));
@@ -97,7 +99,7 @@ fn main() {
 		request.body.read_to_string(&mut payload).unwrap();
 		let import_hold: Import = json::decode(&payload).unwrap();
 		*key = KeyPair::keypair_frombase58wif(import_hold.wif);
-		
+
 		let mut response = Response::with((status::Ok, "all good here"));
 		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
 		println!("hit the server");
