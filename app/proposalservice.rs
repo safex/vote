@@ -1,5 +1,4 @@
 extern crate iron;
-extern crate iron_cors;
 extern crate router;
 extern crate rustc_serialize;
 extern crate safex;
@@ -17,7 +16,6 @@ use vote::voting::vote_genesis::{VoteRound};
 use vote::utils::get_address_methods::OmniList;
 use vote::utils::get_address_methods::get_omniwalletorg;
 
-use iron_cors::CORS;
 use iron::prelude::*;
 use iron::{status, headers};
 use iron::method::Method;
@@ -169,6 +167,3 @@ fn main() {
 
     Iron::new(router).http("localhost:3000").unwrap();
 }
-
-
-//need app 

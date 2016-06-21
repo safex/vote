@@ -41,9 +41,6 @@ iron = "0.3.0"
 rand = "0.3.14"
 router = "*"
 
-[dependencies.iron-cors]
-git = "https://github.com/fxbox/iron-cors"
-
 [dependencies.safex]
 git = "https://github.com/safex/safex"
 
