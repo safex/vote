@@ -1,0 +1,25 @@
+{
+  "name": "voteui",
+  "version": "0.1.0",
+  "description": "GUI for importing proposals and submitting votes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/safex/vote.git"
+  },
+  "keywords": [
+    "Cryptographic",
+    "Voting",
+    "Bitcoin",
+    "SafeExchangeCoin"
+  ],
+  "author": "Dallyshalla",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/safex/vote/issues"
+  },
+  "homepage": "https://github.com/safex/vote#readme"
+}
