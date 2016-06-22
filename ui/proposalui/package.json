@@ -4,7 +4,8 @@
   "description": "GUI for making proposals",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --progress --profile --colors --display-error-details --display-cached",
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,28 @@
   "bugs": {
     "url": "https://github.com/safex/vote/issues"
   },
-  "homepage": "https://github.com/safex/vote#readme"
+  "homepage": "https://github.com/safex/vote#readme",
+  "devDependencies": {
+    "electron-prebuilt": "^0.37.8",
+    "es6-shim": "^0.34.0",
+    "ts-loader": "^0.7.2",
+    "typescript": "^1.7.3",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.14.0"
+  },
+  "dependencies": {
+    "@angular/common": "2.0.0-rc.1",
+    "@angular/compiler": "2.0.0-rc.1",
+    "@angular/core": "2.0.0-rc.1",
+    "@angular/http": "2.0.0-rc.1",
+    "@angular/platform-browser": "2.0.0-rc.1",
+    "@angular/platform-browser-dynamic": "2.0.0-rc.1",
+    "@angular/router": "2.0.0-rc.1",
+    "angular2-in-memory-web-api": "0.0.10",
+    "es6-shim": "^0.35.0",
+    "ng2-file-upload": "^1.0.3",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.6",
+    "zone.js": "^0.6.12"
+  }
 }
