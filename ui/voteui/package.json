@@ -4,7 +4,8 @@
   "description": "GUI for importing proposals and submitting votes",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --progress --profile --colors --display-error-details --display-cached",
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,20 @@
   "bugs": {
     "url": "https://github.com/safex/vote/issues"
   },
-  "homepage": "https://github.com/safex/vote#readme"
+  "homepage": "https://github.com/safex/vote#readme",
+  "devDependencies": {
+    "electron-prebuilt": "^1.2.3",
+    "es6-shim": "^0.35.1",
+    "ts-loader": "^0.8.2",
+    "typescript": "^1.8.10",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "angular2": "2.0.0-beta.17", 
+    "es6-shim": "^0.35.1",
+    "reflect-metadata": "^0.1.3",
+    "rxjs": "5.0.0-beta.9",
+    "zone.js": "^0.6.12"
+  }
 }
