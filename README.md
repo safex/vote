@@ -49,7 +49,7 @@ cargo run --bin vote
 ```
 
 
-#### Generate random base64 private bitcoin and public key pair
+#### Generate random base64 && base58(WIF) private bitcoin and public key pair
 
 ```bash
 # download and build safex/vote
