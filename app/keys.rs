@@ -12,5 +12,6 @@ fn main() {
 	let pk = keys.public();
 	let sk = keys.secret();
 	println!("base64 private key: {:?}", KeyPair::private_key_tobase64(*sk));
+	println!("WIF private key: {:?}", KeyPair::private_key_base58(*sk));
 	println!("base58 bitcoin address: {:?}", KeyPair::address_base58(pk));
 }
