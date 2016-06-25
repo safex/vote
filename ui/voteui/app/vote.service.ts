@@ -18,4 +18,19 @@ export class VoteService {
 
 	}
 
+	set_proposal(body) {
+		return this._http.post('http://localhost:3000/setproposal', body)
+			.map(res => res.json())
+	}
+
+	set_vote(body) {
+		return this._http.post('http://localhost:3000/setvote', body)
+			.map(res => res.json())
+	}
+
+	get_vote() {
+		return this._http.get('http://localhost:3000/getvote')
+			.map(res => res.json())
+	}
+
 }

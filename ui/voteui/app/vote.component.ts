@@ -16,10 +16,16 @@ import {VoteService} from "./vote.service";
 		<p>Proposal Title: {{ title }}</p>
 		<p>Proposal Terms: {{ the_terms }}</p>
 		Responses are: <ul>
-			<li *ngFor="let response of responses">
-				 {{ response }}
+			<li *ngFor="let response of responses; let i=index">
+				 {{ response }} <button (click)="makeSelection(i)">Select {{ i }}</button>
 			</li>
 		</ul>
+
+		Vote Selection: {{ selection }}
+
+		<button (click)="makeVote()">Generate Vote</button>
+
+		<button (click)="saveVote()">Save Vote To Desktop</button>
 	`,
 	providers: [VoteService]
 })
@@ -30,7 +36,11 @@ export class VoteComponent {
 	title: string;
 	the_terms: string;
 	responses: string[];
+	selection: string;
+	vote_data: string;
 
+
+    constructor(private _voteService: VoteService) {}
 
 	changeListener(event) {
 		var reader = new FileReader();
@@ -44,12 +54,45 @@ export class VoteComponent {
 			self.title = contents[title];
        		self.the_terms = contents[the_terms];
        		self.responses = contents[responses];
+       		self._voteService.set_proposal(JSON.stringify(contents))
+       			.subscribe(
+       				data => console.log("sent"),
+       				error => console.log("error getting data here its fine"),
+       				() => console.log("finished subscribe")
+       			);
         };
         // read the image file as a data URL.
         reader.readAsText(event.target.files[0]);
     }
 
-    constructor(private _voteService: VoteService) {}
+    makeVote() {
+    	var vote_index = "vote_index";
+		var json = {};
+		json[vote_index] = +this.selection;
+		this._voteService.set_vote(JSON.stringify(json))
+		.subscribe(
+			data => console.log("success"),
+			error => console.log("error getting data here its fine"),
+			() => console.log("finished")
+		);
+    }
+
+    saveVote() {
+    	var dater = this;
+    	this._voteService.get_vote()
+		.subscribe(
+			data => this.pubKey = JSON.stringify(data),
+			error => console.log("error getting data here its fine"),
+			() => console.log("finished")
+		);
+		
+    }
+
+    makeSelection(i) {
+    	console.log(i);
+    	this.selection = i;
+    }
+
 
     getKey() {
     	this._voteService.get_key()
@@ -68,7 +111,7 @@ export class VoteComponent {
 		this._voteService.set_key(JSON.stringify(json))
 			.subscribe(
 				data => console.log("finished import"),
-				error => console.log("no data received"),
+       			error => console.log("error getting data here its fine"),
 				() => console.log("finished import")
 			);
     }
