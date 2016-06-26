@@ -9,7 +9,6 @@ import {HTTP_PROVIDERS} from "angular2/http";
 @Component({
 	selector: 'app',
 	template: `
-		<h2>hello world</h2>
 		<vote></vote>
 	`,
 	directives: [VoteComponent]

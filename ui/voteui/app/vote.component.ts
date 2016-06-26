@@ -5,30 +5,39 @@ import {VoteService} from "./vote.service";
 @Component({
 	selector: 'vote',
 	template: `
-		<button (click)="getKey()">test GET request</button><br>
-		<p>Output: {{pubKey}}</p>
-		
-		<input placeholder="Input your Wallet Import Format (WIF) private key here" #importbox><button (click)="postWIF(importbox)">Import Key</button><br>
+		<div class="header">
+	<h3 class="main-head">Voting Application</h3>
+	    <div class="head-strip">
 
-		<p> Upload the proposal you wish to vote on </p>
+		<p class="attribute">Your Public Key: <span class="text-value">{{pubKey}}</span></p>
+		
+		<input class="input-field" placeholder="Input your Wallet Import Format (WIF) private key here" #importbox><button class="small-btn" (click)="postWIF(importbox)">Import Key</button><br>
+
+		<p class="attribute"> Upload the proposal you wish to vote on </p>
 		<input type="file" (change)="changeListener($event)" #input/>
 
-		<p>Proposal Title: {{ title }}</p>
-		<p>Proposal Terms: {{ the_terms }}</p>
-		Responses are: <ul>
-			<li *ngFor="let response of responses; let i=index">
-				 {{ response }} <button (click)="makeSelection(i)">Select {{ i }}</button>
+		<p class="attribute">Proposal Title: <span class="text-value">{{ title }}</span></p>
+		<p class="attribute">Proposal Terms: <span class="text-value">{{ the_terms }}</span></p>
+
+		<p class="attribute">Responses are:</p> 
+		<ul>
+			<li class="answers" *ngFor="let response of responses; let i=index">
+				 {{ response }} <button class="small-btn" (click)="makeSelection(i)">Select {{ i }}</button>
 			</li>
 		</ul>
 
-		Vote Selection: {{ selection }}
+		<p class="attribute">Vote Selection: <span class="text-value">{{ selection }}</span></p> 
 
-		<button (click)="makeVote()">Generate Vote</button>
+		<button class="small-btn" (click)="makeVote()">Generate Vote</button>
 
-		<button (click)="saveVote()">Save Vote To Desktop</button>
-		<div id="container"></div>
+		<button class="small-btn" (click)="saveVote()">Save Vote To Desktop</button>
+
+		<br><br><div id="container"></div>
+	</div>
+	</div>
 	`,
-	providers: [VoteService]
+	providers: [VoteService],
+	styleUrls: ['css/bootstrap.css', 'css/style.css']
 })
 
 
@@ -120,6 +129,7 @@ export class VoteComponent {
        			error => console.log("error getting data here its fine"),
 				() => console.log("finished import")
 			);
+		this.getKey();
     }
 
 }

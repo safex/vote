@@ -1,0 +1,94 @@
+
+h4, h5, h6,
+h1, h2, h3 {margin: 0;}
+ul, ol {margin: 0;}
+p {margin: 0; line-height: 40px;}
+html, body{
+  font-family: 'SourceSansPro-Light';
+   font-size: 100%;
+   background:#eeeeee; 
+}
+
+p.attribute {
+  font-weight: 700;
+}
+
+p.attribute span.text-value {
+  font-weight: 500;
+}
+
+@font-face {
+    font-family: 'SourceSansPro-Light';
+    src:url(../fonts/SourceSansPro-Light.ttf) format('truetype');
+}
+@font-face {
+	font-family: 'SignikaNegative-Regular';
+    src:url(../fonts/SignikaNegative-Regular.ttf) format('truetype');
+}
+
+.header {
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto 0em;
+  padding:3em 0em 4em 0em;
+}
+.header h3.main-head {
+  text-align: center;
+  font-size: 3em;
+  margin: 0em 0em 1.3em 0em;
+  color: #2d2c82;
+}
+.head-strip {
+  background: #fff;
+  padding: 1em 1em;
+  border-radius: 4px;
+  margin: 0em 0em 3em 0em;
+  position: relative;
+}
+
+
+input {
+  width: 70%;
+  margin: 0 10px 0 0;
+}
+
+button.small-btn {
+  font-size: 0.95em;
+  color: black;
+  background: #DAD8D8;
+  padding: 0.2em;
+  border-radius: 4px;
+}
+
+button.small-btn:hover {
+  background:#B0AEAE;
+  text-decoration:none;
+  transition: 0.5s all;
+  -webkit-transition: 0.5s all;
+  -moz-transition: 0.5s all;
+  -o-transition: 0.5s all;
+}
+
+.bann-rit {
+  /*float: left;*/
+  clear: both;
+  display: block;
+  margin: 1.3em 0em 0em 0em;
+  box-shadow: none;
+}
+.bann-rit a, .bann-rit.get {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #fff;
+  background: #2d2c82;
+  padding: 0.8em;
+  border-radius: 4px;
+}
+.bann-rit a:hover, .bann-rit.get:hover{
+	background:#8E8C8C;
+	text-decoration:none;
+	transition: 0.5s all;
+  -webkit-transition: 0.5s all;
+  -moz-transition: 0.5s all;
+  -o-transition: 0.5s all;
+}
