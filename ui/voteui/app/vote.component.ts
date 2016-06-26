@@ -26,6 +26,7 @@ import {VoteService} from "./vote.service";
 		<button (click)="makeVote()">Generate Vote</button>
 
 		<button (click)="saveVote()">Save Vote To Desktop</button>
+		<div id="container"></div>
 	`,
 	providers: [VoteService]
 })
@@ -78,14 +79,19 @@ export class VoteComponent {
     }
 
     saveVote() {
-    	var dater = this;
+    	var contents;
     	this._voteService.get_vote()
 		.subscribe(
-			data => this.pubKey = JSON.stringify(data),
+			data => {
+				contents = JSON.stringify(data);
+				var dater = "text/json;charset=utf-8," + encodeURIComponent(contents);
+				var link = document.getElementById("container");
+				link.innerHTML = '<a href="data:' + dater + '" download="vote.vote">Save Vote File</a>';
+			},
 			error => console.log("error getting data here its fine"),
 			() => console.log("finished")
 		);
-		
+
     }
 
     makeSelection(i) {
