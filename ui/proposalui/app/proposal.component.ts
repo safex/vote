@@ -17,7 +17,7 @@ import {ProposalService} from "./proposal.service";
 
 		<br><br><textarea placeholder="Enter the terms of the proposal"></textarea><br>
 
-		<br><br><input placeholder="Here enter a choice for people to select in voting"><button>Add Choice</button><br>
+		<br><br><input placeholder="Here enter a choice for people to select in voting" #choice><button (click)="addChoice(choice)">Add Choice</button><br>
 
 		<br><br><button>Create Proposal</button>
 
@@ -36,8 +36,13 @@ export class ProposalComponent {
 	pubKey: string;
 	title: string;
 	the_terms: string;
-	choices: string[];
+	choices: string[] = [];
 
+
+	addChoice(choice) {
+		this.choices.push(choice.value);
+		console.log(this.choices);
+	}
 
     constructor(private _proposalService: ProposalService) {}
 
