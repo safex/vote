@@ -13,13 +13,13 @@ import {ProposalService} from "./proposal.service";
 		
 		<input class="input-field" placeholder="Input your Wallet Import Format (WIF) private key here" #importbox><button class="small-btn" (click)="postWIF(importbox)">Import Key</button><br>
 
-		<br><br><input placeholder="Enter the title for the proposal"><br>
+		<br><br><input placeholder="Enter the title for the proposal" #title><br>
 
-		<br><br><textarea placeholder="Enter the terms of the proposal"></textarea><br>
+		<br><br><textarea placeholder="Enter the terms of the proposal" #terms></textarea><br>
 
 		<br><br><input placeholder="Here enter a choice for people to select in voting" #choice><button (click)="addChoice(choice)">Add Choice</button><br>
 
-		<br><br><button>Create Proposal</button>
+		<br><br><button (click)="setProposal(title, terms)">Create Proposal</button>
 
 		<br><br><div id="container"></div>
 
@@ -44,6 +44,8 @@ export class ProposalComponent {
 		console.log(this.choices);
 	}
 
+	
+
     constructor(private _proposalService: ProposalService) {}
 
 	
@@ -56,6 +58,24 @@ export class ProposalComponent {
 			() => console.log("finished")
 		);
     }
+
+	setProposal(title, terms) {
+		this.title = title.value;
+		this.the_terms = terms.value;
+		var the_title = "title";
+		var term = "terms";
+		var choose = "choices";
+		var json = {};
+		json[the_title] = this.title;
+		json[term] = this.the_terms;
+		json[choose] = this.choices;
+		this._proposalService.make_proposal(JSON.stringify(json))
+		.subscribe(
+			data => console.log("success"),
+			error => console.log("error getting data here its fine"),
+			() => console.log("finished")
+		);
+	}
 
     postWIF(importbox) {
     	var key = "wif";
