@@ -19,6 +19,12 @@ import {ProposalService} from "./proposal.service";
 
 		<br><br><input placeholder="Here enter a choice for people to select in voting" #choice><button (click)="addChoice(choice)">Add Choice</button><br>
 
+		<br><br><ul>
+			<li class="answers" *ngFor="let choice of choices; let i=index">
+				 {{ choice }} <button class="small-btn" (click)="removeChoice(i)">remove {{ i }}</button>
+			</li>
+		</ul>
+
 		<br><br><button (click)="setProposal(title, terms)">Create Proposal</button>
 
 		<button class="small-btn" (click)="saveProposal()">Save Proposal To Desktop</button>
@@ -50,6 +56,9 @@ export class ProposalComponent {
 
     constructor(private _proposalService: ProposalService) {}
 
+    removeChoice(i) {
+    	this.choices.splice(i, 1);
+    }
 	
 
     getKey() {
