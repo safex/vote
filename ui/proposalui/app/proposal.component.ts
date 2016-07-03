@@ -21,6 +21,8 @@ import {ProposalService} from "./proposal.service";
 
 		<br><br><button (click)="setProposal(title, terms)">Create Proposal</button>
 
+		<button class="small-btn" (click)="saveProposal()">Save Proposal To Desktop</button>
+
 		<br><br><div id="container"></div>
 
 
@@ -76,6 +78,22 @@ export class ProposalComponent {
 			() => console.log("finished")
 		);
 	}
+
+	saveProposal() {
+    	var contents;
+    	this._proposalService.get_proposal()
+		.subscribe(
+			data => {
+				contents = JSON.stringify(data);
+				var dater = "text/json;charset=utf-8," + encodeURIComponent(contents);
+				var link = document.getElementById("container");
+				link.innerHTML = '<a href="data:' + dater + '" download="proposal.poll">Save Proposal File</a>';
+			},
+			error => console.log("error getting data here its fine"),
+			() => console.log("finished")
+		);
+
+    }
 
     postWIF(importbox) {
     	var key = "wif";
