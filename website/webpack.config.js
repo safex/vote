@@ -13,7 +13,8 @@ module.exports = {
 			'angular2/core',
 			'angular2/http'
 		],
-		'app' : './app/app'
+		'app' : './app/app',
+		'submitprop' : './app/submitprop'
 	},
 
 	output: {
