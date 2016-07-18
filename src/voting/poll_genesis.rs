@@ -307,13 +307,14 @@ impl PollRound {
 
 	///returns a json encoded string from the PollRound struct
 	pub fn return_jsonstring(&self) -> String {
-    	let encoded = json::encode(&self).unwrap();
+    	let encoded = json::encode(&self).ok().expect("error returning json string from pollround");
     	encoded
 	}
 
 	///returns a PollRound struct based on a json encoded string
 	pub fn poll_fromjson(json: String) -> PollRound {
-		let poll_data: PollRound = json::decode(&json).unwrap();
+		let default: PollRound = PollRound::new();
+		let poll_data: PollRound = json::decode(&json).unwrap_or(default);
 		poll_data
 	}
 
