@@ -42,9 +42,9 @@ path = "app/votingsite.rs"
 [dependencies]
 rustc-serialize = "0.3.18"
 hyper = "0.6.16"
-iron = "0.3.0"
+iron = "0.4.0"
 rand = "0.3.14"
-router = "*"
+router = "0.2.0"
 
 [dependencies.safex]
 git = "https://github.com/safex/safex"
