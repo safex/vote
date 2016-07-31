@@ -93,7 +93,7 @@ impl VotingOutcome {
     		let the_path = Path::new(&poll_path);
     		let poll = PollRound::return_pollfromfile(the_path);
     		let poll_jsonstr = poll.return_jsonstring();
-    		let poll_check = VotingOutcome::poll_check(poll_jsonstr);
+    		let poll_check = VotingOutcome::poll_check(&poll_jsonstr);
     		if poll_check == true {
 
     			let responses = poll.return_pollchoices();
@@ -165,8 +165,8 @@ impl VotingOutcome {
 		//so will need to import votehash etc to validate all votes entirely.
 	}
 
-	pub fn poll_check(pollround: String) -> bool {
-		let poll = PollRound::poll_fromjson(pollround);
+	pub fn poll_check(pollround: &str) -> bool {
+		let poll = PollRound::poll_fromjson(pollround.to_string());
 		let poll_hash = poll.return_pollhash();
 		let mut pollhash: Vec<u8> = Vec::new();
 		for a in poll_hash.iter() {
