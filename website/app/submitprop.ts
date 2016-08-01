@@ -2,7 +2,7 @@
 
 import {bootstrap} from 'angular2/platform/browser';
 import {Component} from 'angular2/core';
-import {Http} from "angular2/http";
+import {Http, Response} from "angular2/http";
 import 'rxjs/add/operator/map';
 import {HTTP_PROVIDERS} from "angular2/http";
 
@@ -14,6 +14,8 @@ import {HTTP_PROVIDERS} from "angular2/http";
 
 		<input type="file" (change)="changeListener($event)" #input/>
 
+		<br>{{ what_happen }}
+
 		
 	`,
 	directives: [],
@@ -21,6 +23,7 @@ import {HTTP_PROVIDERS} from "angular2/http";
 })
 
 export class AppComponent {
+	what_happen: string;
 	
     constructor(private _http: Http) {}
 
@@ -28,21 +31,27 @@ export class AppComponent {
 		return this._http.post('http://localhost:3100/upload_proposal', body)
 			.map(res => res.json())
 	}
-
+ 	
 
 	changeListener(event) {
 		var self = this;
 		var contents = "";
 		var reader = new FileReader();
+		
         reader.onload = function(e:any) {
-			contents = JSON.parse(e.target.result);
+			try {contents = JSON.parse(e.target.result);
+				console.log(JSON.stringify(contents));
        		self.upload_proposal(JSON.stringify(contents))
        			.subscribe(
-       				data => console.log("sent"),
-       				error => console.log("error getting data here its fine"),
+       				data => self.what_happen = JSON.stringify(data),
+       				error => self.what_happen = "error with your file",
        				() => console.log("finished subscribe")
        			);
+       			} catch (Error) {
+    		self.what_happen = "error";
+    	}
         };
+
         // read the image file as a data URL.
         reader.readAsText(event.target.files[0]);
     }

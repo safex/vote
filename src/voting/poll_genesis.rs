@@ -383,7 +383,7 @@ impl PollRound {
     	let path_string3 = path_string2 + ".poll";
     	let path_string4 = the_home_dir + &path_string3;
     	let path = Path::new(&path_string4); 
-    	println!("{:?}", path);;
+    	println!("{:?}", path);
 		touch(&path).unwrap_or_else(|why| {
                println!("! {:?}", why.kind());
     	}); 
