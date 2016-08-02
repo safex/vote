@@ -27,6 +27,7 @@ use rustc_serialize::json;
 use std::io::Read;
 use std::sync::{Arc, Mutex};
 use std::env;
+use std::fs;
 use std::path::Path;
 use std::fs::OpenOptions;
 use std::error::Error;
@@ -39,6 +40,13 @@ struct Respond {
 	res: String,
 }
 
+#[derive(RustcEncodable, RustcDecodable, Debug)]
+struct MainPageProposals {
+	title: String,
+	hash: String,
+}
+
+
 fn main() {
 
 	let uploaded_proposal = PollRound::new();
@@ -50,6 +58,52 @@ fn main() {
 
 
 	router.post("/upload_proposal", move |r: &mut Request| receive_newproposal(r, &mut poll_clone.lock().unwrap()));
+	router.get("/return_proposals", move |r: &mut Request| return_proposals(r));
+	router.get("/return_proposl", move |r: &mut Request| return_proposal(r));
+
+	//here we need to take a value for which proposal to return and all of its details.
+	///return full detail of particular proposal
+	fn return_proposal(_: &mut Request) -> IronResult<Response> {
+
+		let mut response = Response::with((status::Ok, "ya"));
+		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+		println!("Sucess Returning all paths");
+		Ok(response)
+	}
+
+	///return all proposals - title and hash
+	fn return_proposals(_: &mut Request) -> IronResult<Response> {		
+		let mut the_home_dir = String::new();
+    	match env::home_dir() {
+        	Some(ref p) => the_home_dir = p.display().to_string(),
+        	None => println!("Impossible to get your home dir!")
+    	}
+    	let proposal_write_path = the_home_dir + "/proposals/";
+    	let mut proposals_vec: Vec<MainPageProposals> = Vec::new();
+		match fs::read_dir(proposal_write_path) {
+        	Err(why) => println!("! {:?}", why.kind()),
+        	Ok(paths) => for path in paths {
+        		let path_str = path.unwrap().path();
+        		let poll_filename = path_str.file_name().unwrap();
+        		let poll_filename_str = poll_filename.to_str().unwrap();
+        		let poll_name = poll_filename_str.to_string() + ".poll";
+        		let final_path = path_str.to_str().unwrap().to_string() + "/" + &poll_name;
+        		println!("{:?}", &final_path);
+        		let proposal = PollRound::return_pollfromfile(&Path::new(&final_path));
+        		let partial_prop = MainPageProposals { title: proposal.return_thetitle(), hash: proposal.return_pollhashstring() };
+        		proposals_vec.push(partial_prop);
+       		},
+    	}
+
+
+    	//now we gotta return the poll from the path, and pack up the information.
+    	let path_json_response = json::encode(&proposals_vec).unwrap();
+
+		let mut response = Response::with((status::Ok, path_json_response));
+		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+		println!("Sucess Returning all paths");
+		Ok(response)
+	}
 
 	///post a proposal to the server
 	fn receive_newproposal(request: &mut Request, proposal: &mut PollRound) -> IronResult<Response> {
@@ -89,15 +143,19 @@ fn main() {
     				name_hash.push_str(strings);
     			}
 
-    			let proposal_root = "/".to_string() + &name_hash + "/";
-
-    			let proposal_root_clone = proposal_root.clone();
+    			let proposal_root = "/proposals/".to_string();
 
     			make_app_root_dir(proposal_root.to_string());
 
-    			println!("{:?}", &proposal_root_clone);
+    			let poll_root =  "/proposals/".to_string() + &name_hash + "/";
 
-    			let proposal_write_path = home_dirclone + &proposal_root_clone +  &name_hash + ".poll";
+    			let poll_root_clone = poll_root.clone();
+
+    			make_app_root_dir(poll_root.to_string());
+
+    			println!("{:?}", &poll_root_clone);
+
+    			let proposal_write_path = home_dirclone + &poll_root_clone +  &name_hash + ".poll";
     			let path = Path::new(&proposal_write_path); 
     			println!("{:?}", path);
 				touch(&path).unwrap_or_else(|why| {
@@ -106,8 +164,6 @@ fn main() {
 
 				let display = "a";
 				let mut file = match OpenOptions::new().read(true).write(true).open(path) {
-            // The `description` method of `io::Error` returns a string that
-            // describes the error
         			Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
        				Ok(file) => file,
     			};
