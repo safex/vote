@@ -9,6 +9,7 @@
 	},
 	"files": [
 		"app/app.ts",
-		"app/submitprop.ts"
+		"app/submitprop.ts",
+		"app/viewprop.ts"
 	]
 }

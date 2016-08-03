@@ -12,7 +12,7 @@ import {HTTP_PROVIDERS} from "angular2/http";
 		<h1>Safe Exchange | Submit Proposal</h1>
 		<a href="/">View Proposals</a>
 
-		<input type="file" (change)="changeListener($event)" #input/>
+		<br><input type="file" (change)="changeListener($event)" #input/>
 
 		<br>{{ what_happen }}
 

@@ -34,6 +34,10 @@ use std::error::Error;
 use std::fs::File;
 use std::io::Write;
 
+#[derive(RustcEncodable, RustcDecodable)]
+struct ProposalRequest {
+	directory_name: String,
+}
 
 #[derive(RustcEncodable, RustcDecodable)]
 struct Respond {
@@ -54,21 +58,56 @@ fn main() {
 	let poll_clone = the_poll.clone();
 	let poll_clone2 = the_poll.clone();
 
+
 	let mut router = Router::new();
 
 
 	router.post("/upload_proposal", move |r: &mut Request| receive_newproposal(r, &mut poll_clone.lock().unwrap()));
 	router.get("/return_proposals", move |r: &mut Request| return_proposals(r));
-	router.post("/return_proposl", move |r: &mut Request| return_proposal(r));
+	router.post("/return_proposal", move |r: &mut Request| return_proposal(r));
 
 	//here we need to take a value for which proposal to return and all of its details.
 	///return full detail of particular proposal
 	fn return_proposal(request: &mut Request) -> IronResult<Response> {
+		let mut payload = String::new();
+		let request_read = match request.body.read_to_string(&mut payload) {
+			Ok(n) => "good".to_string(),
+			Err(e) => "oops".to_string()
+		};
 
-		let mut response = Response::with((status::Ok, "ya"));
-		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
-		println!("Sucess Returning all paths");
-		Ok(response)
+		if request_read != "oops" {
+			let default = ProposalRequest { directory_name : "".to_string() };
+			let target_proposal: ProposalRequest = json::decode(&payload).unwrap_or(default);
+			let mut the_home_dir = String::new();
+    		match env::home_dir() {
+        		Some(ref p) => the_home_dir = p.display().to_string(),
+        		None => println!("Impossible to get your home dir!")
+    		}
+    		let proposal_read_path = the_home_dir + "/proposals/" + &target_proposal.directory_name + "/" + &target_proposal.directory_name + ".poll";
+
+    		println!("{:?}", &proposal_read_path);
+    		//append the name of the directory, 
+    		//find the .poll file
+
+        	let proposal = PollRound::return_pollfromfile(&Path::new(&proposal_read_path));
+    		//respond with the .poll file
+
+    		let proposal_response = proposal.return_jsonstring();
+
+    		let mut response = Response::with((status::Ok, proposal_response));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			println!("Sucess returning the request proposal");
+			Ok(response)
+
+		} else {
+			let resp = Respond { res: "Error reading request for proposal".to_string() };
+			let resp_string = json::encode(&resp).unwrap();
+			let mut response = Response::with((status::Ok, resp_string));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			println!("Error reading request for proposal");
+			Ok(response)
+		}
+
 	
 }
 	///return all proposals - title and hash

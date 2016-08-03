@@ -15,9 +15,9 @@ import {HTTP_PROVIDERS} from "angular2/http";
 
 		<ul>
 			<li *ngFor="let proposal of proposals">
-				 {{ proposal.title | json }} 
-				 {{ proposal.hash | json }} 
-				 <button>View Details</button>
+				<br>{{ proposal.title | json }} 
+				<br>{{ proposal.hash | json }} 
+				<br><a href="/viewproposal/{{proposal.hash}}{{proposal.title}}"><button>View Proposal</button></a>
 			</li>
 		</ul>
 
@@ -35,13 +35,7 @@ export class AppComponent {
 			.map(res => res.json())
 	}
 
-	open_proposal(body) {
-		return this._http.get('http://localhost:3100/return_proposal', body)
-			.map(res => res.json())
-	}
-
 	readproposals() {
-
 		this.get_proposals()
 			.subscribe( 
 				data => {

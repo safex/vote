@@ -10,6 +10,10 @@ app.get('/', function(req, res) {
 app.get('/submitproposal', function(req, res) {
   res.sendFile(__dirname + '/app/submitprop.html');
 });
+app.get('/viewproposal/:proposalName', function(req, res) {
+  res.sendFile(__dirname + '/app/viewprop.html');
+});
+
 
 app.get('/build/common.js', function(req, res) {
   res.sendFile(__dirname + '/build/common.js');
@@ -22,6 +26,9 @@ app.get('/build/app.js', function(req, res) {
 });
 app.get('/build/submitprop.js', function(req, res) {
   res.sendFile(__dirname + '/build/submitprop.js');
+});
+app.get('/build/viewprop.js', function(req, res) {
+  res.sendFile(__dirname + '/build/viewprop.js');
 });
 app.get('/node_modules/angular2/bundles/angular2-polyfills.js', function(req, res) {
   res.sendFile(__dirname + '/node_modules/angular2/bundles/angular2-polyfills.js');

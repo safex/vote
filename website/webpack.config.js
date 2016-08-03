@@ -11,10 +11,12 @@ module.exports = {
 			'rxjs',
 			'reflect-metadata',
 			'angular2/core',
-			'angular2/http'
+			'angular2/http',
+			'angular2/router'
 		],
 		'app' : './app/app',
-		'submitprop' : './app/submitprop'
+		'submitprop' : './app/submitprop',
+		'viewprop' : ['./app/viewprop']
 	},
 
 	output: {
