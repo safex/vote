@@ -59,18 +59,18 @@ fn main() {
 
 	router.post("/upload_proposal", move |r: &mut Request| receive_newproposal(r, &mut poll_clone.lock().unwrap()));
 	router.get("/return_proposals", move |r: &mut Request| return_proposals(r));
-	router.get("/return_proposl", move |r: &mut Request| return_proposal(r));
+	router.post("/return_proposl", move |r: &mut Request| return_proposal(r));
 
 	//here we need to take a value for which proposal to return and all of its details.
 	///return full detail of particular proposal
-	fn return_proposal(_: &mut Request) -> IronResult<Response> {
+	fn return_proposal(request: &mut Request) -> IronResult<Response> {
 
 		let mut response = Response::with((status::Ok, "ya"));
 		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
 		println!("Sucess Returning all paths");
 		Ok(response)
-	}
-
+	
+}
 	///return all proposals - title and hash
 	fn return_proposals(_: &mut Request) -> IronResult<Response> {		
 		let mut the_home_dir = String::new();
