@@ -5,9 +5,11 @@ import {Component} from 'angular2/core';
 import {Http, Response} from "angular2/http";
 import 'rxjs/add/operator/map';
 import {HTTP_PROVIDERS} from "angular2/http";
+import {RemoveSpaces} from "./removespace.ts";
 
 @Component({
 	selector: 'app',
+	pipes: [RemoveSpaces],
 	template: `
 		<h1>Safe Exchange Community Voting</h1>
 		<a href="/">Home</a>
@@ -17,7 +19,7 @@ import {HTTP_PROVIDERS} from "angular2/http";
 			<li *ngFor="let proposal of proposals">
 				<br>{{ proposal.title | json }} 
 				<br>{{ proposal.hash | json }} 
-				<br><a href="/viewproposal/{{proposal.hash}}{{proposal.title}}"><button>View Proposal</button></a>
+				<br><a href="/viewproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button>View Proposal</button></a>
 			</li>
 		</ul>
 
