@@ -13,7 +13,7 @@ import {HTTP_PROVIDERS} from "angular2/http";
 	template: `
 		<h1>Safe Exchange | Proposal View</h1>
 		<a href="/">Home</a>
-		<a href="/submitprop">Submit Proposal</a>
+		<a href="/submitproposal">Submit Proposal</a>
 
 		<br>Title: {{ title }}
 		<br>The Terms: {{ the_terms }}
