@@ -24,6 +24,9 @@ import {HTTP_PROVIDERS} from "angular2/http";
 				</li>
 			</ul>
 		<br>Origin Public Key: {{ origin_pubkey }}
+
+		<br><button>Download Proposal File for Voting</button>
+		<br><button>Vote on this Proposal</button>
 	`,
 	directives: [],
 	styleUrls: []

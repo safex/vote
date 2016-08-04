@@ -20,6 +20,7 @@ import {RemoveSpaces} from "./removespace.ts";
 				<br>{{ proposal.title | json }} 
 				<br>{{ proposal.hash | json }} 
 				<br><a href="/viewproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button>View Proposal</button></a>
+				<br><a href="/voteproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button>Vote on this Proposal</button></a>
 			</li>
 		</ul>
 

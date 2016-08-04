@@ -16,7 +16,8 @@ module.exports = {
 		],
 		'app' : './app/app',
 		'submitprop' : './app/submitprop',
-		'viewprop' : ['./app/viewprop']
+		'viewprop' : ['./app/viewprop'],
+		'voteprop' : ['./app/voteprop']
 	},
 
 	output: {

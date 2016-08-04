@@ -65,8 +65,40 @@ fn main() {
 	router.post("/upload_proposal", move |r: &mut Request| receive_newproposal(r, &mut poll_clone.lock().unwrap()));
 	router.get("/return_proposals", move |r: &mut Request| return_proposals(r));
 	router.post("/return_proposal", move |r: &mut Request| return_proposal(r));
+	router.post("/upload_vote", move |r: &mut Request| receive_newvote(r));
 
-	//here we need to take a value for which proposal to return and all of its details.
+
+	fn receive_newvote(request: &mut Request) -> IronResult<Response> {
+		let mut payload = String::new();
+		let request_read = match request.body.read_to_string(&mut payload) {
+			Ok(n) => "good".to_string(),
+			Err(e) => "oops".to_string()
+		};
+
+		if request_read != "oops" {
+
+
+			let resp = Respond { res: "Error uploading vote".to_string() };
+			let resp_string = json::encode(&resp).unwrap();
+			let mut response = Response::with((status::Ok, resp_string));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			println!("Error receiving vote");
+			Ok(response)
+			
+
+		} else {
+			let resp = Respond { res: "Error uploading vote".to_string() };
+			let resp_string = json::encode(&resp).unwrap();
+			let mut response = Response::with((status::Ok, resp_string));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			println!("Error receiving vote");
+			Ok(response)
+		}
+
+
+	}
+
+
 	///return full detail of particular proposal
 	fn return_proposal(request: &mut Request) -> IronResult<Response> {
 		let mut payload = String::new();

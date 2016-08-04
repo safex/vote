@@ -10,6 +10,7 @@
 	"files": [
 		"app/app.ts",
 		"app/submitprop.ts",
-		"app/viewprop.ts"
+		"app/viewprop.ts",
+		"app/voteprop.ts"
 	]
 }
