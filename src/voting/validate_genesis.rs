@@ -11,6 +11,9 @@ use voting::poll_genesis::{PollRound, PollHash};
 use voting::vote_genesis::{VoteRound, VoteHash};
 use utils::get_address_methods::{OmniList};
 
+use rustc_serialize::{Decodable, Decoder};
+use rustc_serialize::json::{self, ToJson, Json};
+
 use safex::genesis::key_generation::KeyPair;
 
 use std::env;
@@ -24,14 +27,15 @@ use std::fs::OpenOptions;
 use std::io::Read;
 use std::io::{BufRead};
 
+#[derive(Clone, RustcDecodable, RustcEncodable)]
 pub struct VotingOutcome {
+	proposal_title: String,
 	responses: Vec<String>,
 	tally: Vec<i32>,
-	outcome_hash: Vec<u8>,
 	participating_addresses: Vec<VotePiece>,
-	vote_weight: Vec<i32>,
 }
 
+#[derive(Clone, RustcDecodable, RustcEncodable)]
 pub struct VotePiece {
 	vote_hash: Vec<u8>,
 	vote_count: i32,
@@ -39,6 +43,142 @@ pub struct VotePiece {
 }
 
 impl VotingOutcome {
+	pub fn new() -> VotingOutcome {
+		VotingOutcome {
+			proposal_title: String::new(),
+			responses: Vec::new(),
+			tally: Vec::new(),
+			participating_addresses: Vec::new(),
+		}
+	}
+	pub fn return_jsonstring(&self) -> String {
+		let default = String::new();
+		let outcome_data = json::encode(&self).unwrap_or(default);
+		outcome_data
+	}
+
+	///receive a directory through parameter and return the results
+	pub fn validate_outcomewithpath(proposalfolder: String) -> VotingOutcome {
+		//find the .poll file read and verify
+		//find the .vote files read each and tally the vote
+    	//read poll 
+    	let empty_outcome = VotingOutcome::new();
+    	let path = Path::new(&proposalfolder);
+
+    	let all_paths = return_dirpaths(&path);
+    	let mut vote_paths = Vec::new();
+    	let mut poll_path = String::new();
+    	for paths in all_paths {
+
+			let last_five: Vec<char> = paths.chars().collect();
+			let len = last_five.len();
+			let mut index = len - 5;
+			let mut path_str = String::new();
+			while index < len {
+				path_str.push(last_five[index]);
+				index += 1;
+			}
+			if path_str == ".poll".to_string() {
+				poll_path = paths;
+				println!("found the poll");
+			} else if path_str == ".vote".to_string() {
+				vote_paths.push(paths);
+			}
+    	} 
+    	if poll_path.len() < 1 {
+    		println!("error with poll_path none found");
+    		empty_outcome
+    	} else {
+    		//open up the poll
+    		let the_path = Path::new(&poll_path);
+    		let poll = PollRound::return_pollfromfile(the_path);
+    		let poll_jsonstr = poll.return_jsonstring();
+    		let poll_check = VotingOutcome::poll_check(&poll_jsonstr);
+    		if poll_check == true {
+
+    			let proposal_title = poll.return_thetitle();
+
+    			let responses = poll.return_pollchoices();
+    			let poll_choices: Vec<String> = responses.to_vec();
+    			let poll_choicesclone = poll_choices.clone();
+    			let poll_choicesclone2 = poll_choices.clone();
+    			let mut the_addresses: Vec<String> = Vec::new();
+
+    			let mut the_pieces = Vec::new();
+
+    			let mut the_tally = Vec::new();
+				let mut the_tallybalance = Vec::new();
+
+    			let omni_list = poll.return_eligibleaddresses();
+
+    			for path in vote_paths {
+
+    				let voter = VoteRound::return_votefromfile(Path::new(&path));
+    				let vote_jsonstr = voter.return_jsonstring();
+    				let vote_check = VotingOutcome::vote_check(vote_jsonstr);
+    				if vote_check == true {
+    					let vote_hash = voter.return_votehash();
+    					let vote_pubclone = voter.vote_publickey.clone();
+    					let vote_pubclone1 = voter.vote_publickey.clone();
+    					let vote_count = omni_list.return_balance(vote_pubclone1);
+    					the_tallybalance.push(vote_count);
+    					the_tally.push(voter.vote_message.to_string());
+    					let vote_address = vote_pubclone.to_string();
+    					let the_piece = VotePiece {
+							vote_hash: vote_hash.to_vec(),
+							vote_count: vote_count,
+							vote_address: vote_address,
+						};
+						the_pieces.push(the_piece);
+
+    				} else {
+    					println!("something was wrong with that vote");
+    				}
+    			}
+
+
+    			let mut final_count: Vec<i32> = Vec::new();
+    			let count_clone = final_count.clone();
+    			let mut index = 0;
+    			for choice in poll_choices {
+    				final_count.push(0);
+    				for a in 0..the_tally.len() {
+    					let int = a;
+    					if choice == the_tally[a] {
+    						final_count[index] += the_tallybalance[int];
+    					}
+    				}
+    				index += 1;
+    			}
+
+    			let final_outcome = VotingOutcome {
+    				proposal_title: proposal_title,
+    				responses: poll_choicesclone2,
+    				tally: count_clone,
+    				participating_addresses: the_pieces,
+    			};
+    			for a in 0..final_count.len() {
+    				println!("{:?}", final_count[a]);
+    				println!("{:?}", poll_choicesclone[a]);
+    			}
+
+
+    			final_outcome
+    		}	else {
+    			empty_outcome
+    		}
+    	}
+
+    	//read all votes
+		
+		//iterate through the directory for all .vote files, and parse out their contents also perform validation against the poll first step is the poll import_votes
+		//then a prompt for the votes import, to be validated against the poll and against themselves
+		//so will need to import votehash etc to validate all votes entirely.
+	}
+
+
+
+
 	///grab a directory containing votes and validate them against the poll
 	pub fn validate_outcome() -> bool {
 		//find the .poll file read and verify

@@ -56,6 +56,12 @@ struct ReceiveVote {
 	proposal_directory: String,
 }
 
+#[derive(RustcEncodable, RustcDecodable)]
+struct OutcomeRequest {
+	directory_name: String,
+}
+
+
 fn main() {
 
 	let uploaded_proposal = PollRound::new();
@@ -71,6 +77,50 @@ fn main() {
 	router.get("/return_proposals", move |r: &mut Request| return_proposals(r));
 	router.post("/return_proposal", move |r: &mut Request| return_proposal(r));
 	router.post("/upload_vote", move |r: &mut Request| receive_newvote(r));
+	router.post("/return_results", move |r: &mut Request| return_results(r));
+
+
+	fn return_results(request: &mut Request) -> IronResult<Response> {
+		let mut payload = String::new();
+		let request_read = match request.body.read_to_string(&mut payload) {
+			Ok(n) => "good".to_string(),
+			Err(e) => "oops".to_string()
+		};
+
+		if request_read != "oops" {
+			let default = OutcomeRequest { directory_name: "".to_string() };
+			let outcome_request: OutcomeRequest = json::decode(&payload).unwrap_or(default);
+			let mut the_home_dir = String::new();
+    		match env::home_dir() {
+        		Some(ref p) => the_home_dir = p.display().to_string(),
+        		None => println!("Impossible to get your home dir!")
+    		}
+
+
+    		let poll_root =  "/proposals/".to_string() + &outcome_request.directory_name + "/";
+
+    		let vote_read_path = the_home_dir + &poll_root;
+
+
+			let voting_result = VotingOutcome::validate_outcomewithpath(vote_read_path);
+
+			let resp_string = voting_result.return_jsonstring();
+			let mut response = Response::with((status::Ok, resp_string));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			println!("Success returning voting outcome");
+			Ok(response)
+		} else {
+			let resp = Respond { res: "Error returning voting outcome".to_string() };
+			let resp_string = json::encode(&resp).unwrap();
+			let mut response = Response::with((status::Ok, resp_string));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			println!("Error returning voting outcome");
+			Ok(response)
+		}
+
+
+			
+	}
 
 
 	fn receive_newvote(request: &mut Request) -> IronResult<Response> {
@@ -87,10 +137,6 @@ fn main() {
 			let received_vote: ReceiveVote = json::decode(&payload).unwrap_or(default);
 
 			if VotingOutcome::vote_check(received_vote.vote.return_jsonstring()) == true {
-
-				
-
-
 				let vote = received_vote.vote;
 				let vote_hash = vote.return_votehash();
 				let mut votehash: Vec<u8> = Vec::new();
