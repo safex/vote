@@ -5,28 +5,35 @@ import {Component} from 'angular2/core';
 import {Http} from "angular2/http";
 import 'rxjs/add/operator/map';
 import {HTTP_PROVIDERS} from "angular2/http";
+import {RemoveSpaces} from "./removespace.ts";
 
 
 
 @Component({
 	selector: 'proposalview',
+	pipes: [RemoveSpaces],
 	template: `
 		<h1>Safe Exchange | Proposal View</h1>
 		<a href="/">Home</a>
 		<a href="/submitproposal">Submit Proposal</a>
 
-		<br>Title: {{ title }}
-		<br>The Terms: {{ the_terms }}
-		<br>Responses: 
+		<br><b>Title:</b> 
+			<br>{{ title }}
+		<br><b>The Terms:</b>
+			<br>{{ the_terms }}
+		<br><b>Responses:</b>
 			<ul>
 				<li *ngFor="let resp of responses">
 					{{ resp }}
 				</li>
 			</ul>
-		<br>Origin Public Key: {{ origin_pubkey }}
+		<br><b>Origin Public Key:</b>
+			<br>{{ origin_pubkey }}
+		<br><b>Origin Proposal Hash:</b> 
+			<br>{{ hash }}
 
 		<br><button>Download Proposal File for Voting</button>
-		<br><button>Vote on this Proposal</button>
+		<br><a href="/voteproposal/{{hash}}{{title | removeSpaces}}"><button>Vote on this Proposal</button></a>
 	`,
 	directives: [],
 	styleUrls: []
@@ -37,6 +44,7 @@ export class ViewProposalComponent {
 	the_terms: string;
 	responses: string[] = [];
 	origin_pubkey: string;
+	hash: string;
 
     constructor(private _http: Http) {}
 
@@ -52,7 +60,8 @@ export class ViewProposalComponent {
 				data => { self.title = data.title;
 					self.the_terms = data.the_terms;
 					self.responses = data.responses;
-					self.origin_pubkey = data.origin_pubkey;	
+					self.origin_pubkey = data.origin_pubkey;
+					self.hash = data.poll_hash;	
 				},
 				error => console.log("error"),
 				() => console.log("finished")

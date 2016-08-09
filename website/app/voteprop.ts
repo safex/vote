@@ -28,6 +28,8 @@ export class AppComponent {
 	the_terms: string;
 	responses: string[] = [];
 	origin_pubkey: string;
+
+	directoryname: string;
 	
     constructor(private _http: Http) {}
 
@@ -37,6 +39,8 @@ export class AppComponent {
 	}
  	
 
+ 	//we have to send a vote and tell the service which proposal we are voting on.
+
 	changeListener(event) {
 		var self = this;
 		var contents = "";
@@ -44,8 +48,13 @@ export class AppComponent {
 		
         reader.onload = function(e:any) {
 			try {contents = JSON.parse(e.target.result);
-				console.log(JSON.stringify(contents));
-       		self.upload_vote(JSON.stringify(contents))
+				var key1 = "vote";
+				var key2 = "proposal_directory";
+				var json = {};
+				json[key1] = contents;
+				json[key2] = self.directoryname;
+				console.log(JSON.stringify(json));
+       		self.upload_vote(JSON.stringify(json))
        			.subscribe(
        				data => self.what_happen = JSON.stringify(data),
        				error => self.what_happen = "error with your file",
@@ -90,6 +99,7 @@ export class AppComponent {
 		json[key] = result;
 		var stringified = JSON.stringify(json);
 		this.loadProposal(stringified);
+		this.directoryname = res[1];
 	}
 }
 
