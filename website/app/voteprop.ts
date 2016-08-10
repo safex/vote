@@ -16,6 +16,25 @@ import {HTTP_PROVIDERS} from "angular2/http";
 
 		<br>{{ what_happen }}
 
+		<br>
+		<br>
+		<br>
+		Submitting Vote for:
+
+		<br>
+		<br>
+		<br><b>Title:</b> 
+			<br>{{ title }}
+		<br><b>The Terms:</b>
+			<br>{{ the_terms }}
+		<br>
+			<br><b>Responses:</b>
+			<ul>
+				<li *ngFor="let resp of responses">
+					{{ resp }}
+				</li>
+			</ul>
+
 		
 	`,
 	directives: [],

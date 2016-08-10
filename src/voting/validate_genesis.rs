@@ -62,6 +62,9 @@ impl VotingOutcome {
 		//find the .poll file read and verify
 		//find the .vote files read each and tally the vote
     	//read poll 
+
+    	//check if the public key has voted yet or not
+    	//check if the vote matches the proposal
     	let empty_outcome = VotingOutcome::new();
     	let path = Path::new(&proposalfolder);
 
