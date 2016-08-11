@@ -96,6 +96,7 @@ impl VoteRound {
 		}
 	}
 
+
 	pub fn vote_newparam(
 		poll_round: String,
 		keys: &KeyPair,
@@ -356,6 +357,11 @@ impl VoteRound {
 	pub fn return_votecount(&self, list: &OmniList) -> i32 {
 		list.return_balance(self.vote_publickey.to_string())
 
+	}
+
+	pub fn return_publickey(&self) -> String {
+		let our_string = self.vote_publickey.to_string();
+		our_string
 	}
 
 	///returns a VoteRound from a file path

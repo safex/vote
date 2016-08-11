@@ -57,6 +57,18 @@ impl VotingOutcome {
 		outcome_data
 	}
 
+
+	pub fn check_duplicatevote(proposalfolder: String, address: String) -> bool {
+		let the_outcome = VotingOutcome::validate_outcomewithpath(proposalfolder);
+
+		for addy in the_outcome.participating_addresses {
+			if addy.vote_address == address {
+				return true
+			}
+		}
+		false
+	}
+
 	///receive a directory through parameter and return the results
 	pub fn validate_outcomewithpath(proposalfolder: String) -> VotingOutcome {
 		//find the .poll file read and verify

@@ -122,7 +122,7 @@ fn main() {
 			
 	}
 
-
+	//have to check if the vote corresponds to this proposal
 	fn receive_newvote(request: &mut Request) -> IronResult<Response> {
 		let mut payload = String::new();
 		let request_read = match request.body.read_to_string(&mut payload) {
@@ -138,66 +138,78 @@ fn main() {
 
 			if VotingOutcome::vote_check(received_vote.vote.return_jsonstring()) == true {
 				let vote = received_vote.vote;
-				let vote_hash = vote.return_votehash();
-				let mut votehash: Vec<u8> = Vec::new();
-				for a in vote_hash.iter() {
 
-					votehash.push(*a);
-				}
-				let vote_name = String::from_utf8(votehash).unwrap();
-				let proposal_dir = received_vote.proposal_directory;
+				if VotingOutcome::check_duplicatevote(received_vote.proposal_directory.to_string(), vote.return_publickey()) == false {
+					let vote_hash = vote.return_votehash();
+					let mut votehash: Vec<u8> = Vec::new();
+					for a in vote_hash.iter() {
 
-				//directory name is received_vote
+						votehash.push(*a);
+					}
+					let vote_name = String::from_utf8(votehash).unwrap();
+					let proposal_dir = received_vote.proposal_directory;
+
+					//directory name is received_vote
 				
-				let mut the_home_dir = String::new();
-    			match env::home_dir() {
-        			Some(ref p) => the_home_dir = p.display().to_string(),
-        			None => println!("Impossible to get your home dir!")
-    			}
+					let mut the_home_dir = String::new();
+    				match env::home_dir() {
+        				Some(ref p) => the_home_dir = p.display().to_string(),
+        				None => println!("Impossible to get your home dir!")
+    				}
 
 
-    			let poll_root =  "/proposals/".to_string() + &proposal_dir + "/";
+    				let poll_root =  "/proposals/".to_string() + &proposal_dir + "/";
 
-    			let poll_root_clone = poll_root.clone();
+    				let poll_root_clone = poll_root.clone();
 
-    			println!("{:?}", &poll_root_clone);
+    				println!("{:?}", &poll_root_clone);
 
-    			let vote_write_path = the_home_dir + &poll_root_clone +  &vote_name + ".vote";
-    			let path = Path::new(&vote_write_path); 
-    			println!("{:?}", path);
-				touch(&path).unwrap_or_else(|why| {
-               		println!("! {:?}", why.kind());
-    			}); 
+    				let vote_write_path = the_home_dir + &poll_root_clone +  &vote_name + ".vote";
+    				let path = Path::new(&vote_write_path); 
+    				println!("{:?}", path);
+					touch(&path).unwrap_or_else(|why| {
+               			println!("! {:?}", why.kind());
+    				}); 
 
-				let display = "a";
-				let mut file = match OpenOptions::new().read(true).write(true).open(path) {
-        			Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
-       				Ok(file) => file,
-    			};
+					let display = "a";
+					let mut file = match OpenOptions::new().read(true).write(true).open(path) {
+        				Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+       					Ok(file) => file,
+    				};
 
-    			let encoded = vote.return_jsonstring();
-				let json_str = encoded.to_string();
-				let write_result = match file.write_all(&encoded.as_bytes()) {
-					Ok(_) => "good",
-					Err(_) => "not good"
-				};
+    				let encoded = vote.return_jsonstring();
+					let json_str = encoded.to_string();
+					let write_result = match file.write_all(&encoded.as_bytes()) {
+						Ok(_) => "good",
+						Err(_) => "not good"
+					};
 
-				if write_result == "good" {
-						let resp = Respond { res: "Success Decoding and writing vote to folder".to_string() };
-						let resp_string = json::encode(&resp).unwrap();
-						let mut response = Response::with((status::Ok, resp_string));
-						response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
-						println!("Sucess Decoding and writing vote to folder");
-						Ok(response)
+					if write_result == "good" {
+							let resp = Respond { res: "Success Decoding and writing vote to folder".to_string() };
+							let resp_string = json::encode(&resp).unwrap();
+							let mut response = Response::with((status::Ok, resp_string));
+							response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+							println!("Sucess Decoding and writing vote to folder");
+							Ok(response)
+					} else {
+							let resp = Respond { res: "Error Writing vote to server".to_string() };
+							let resp_string = json::encode(&resp).unwrap();
+							let mut response = Response::with((status::Ok, resp_string));
+							response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+							println!("Error Writing vote to server");
+							Ok(response)
+					}
+
 				} else {
-						let resp = Respond { res: "Error Writing vote to server".to_string() };
-						let resp_string = json::encode(&resp).unwrap();
-						let mut response = Response::with((status::Ok, resp_string));
-						response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
-						println!("Error Writing vote to server");
-						Ok(response)
-				}
+					let resp = Respond { res: "Duplicate Vote".to_string() };
+					let resp_string = json::encode(&resp).unwrap();
+					let mut response = Response::with((status::Ok, resp_string));
+					response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+					println!("Duplicate Vote");
+					Ok(response)
+				}	
 
+				
 
 			} else {
 				let resp = Respond { res: "Error uploading vote".to_string() };
