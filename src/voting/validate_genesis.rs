@@ -130,7 +130,7 @@ impl VotingOutcome {
 
     				let voter = VoteRound::return_votefromfile(Path::new(&path));
     				let vote_jsonstr = voter.return_jsonstring();
-    				let vote_check = VotingOutcome::vote_check(vote_jsonstr);
+    				let vote_check = VotingOutcome::vote_check(vote_jsonstr, poll.return_jsonstring());
     				if vote_check == true {
     					let vote_hash = voter.return_votehash();
     					let vote_pubclone = voter.vote_publickey.clone();
@@ -255,6 +255,7 @@ impl VotingOutcome {
     			let poll_choices: Vec<String> = responses.to_vec();
     			let poll_choicesclone = poll_choices.clone();
     			let mut the_addresses: Vec<String> = Vec::new();
+    			let proposal_hash = poll.return_pollhashstring();
 
     			let mut the_pieces = Vec::new();
 
@@ -267,23 +268,23 @@ impl VotingOutcome {
 
     				let voter = VoteRound::return_votefromfile(Path::new(&path));
     				let vote_jsonstr = voter.return_jsonstring();
-    				let vote_check = VotingOutcome::vote_check(vote_jsonstr);
+    				let vote_check = VotingOutcome::vote_check(vote_jsonstr, poll.return_jsonstring());
     				if vote_check == true {
-    					let vote_hash = voter.return_votehash();
-    					let vote_pubclone = voter.vote_publickey.clone();
-    					let vote_pubclone1 = voter.vote_publickey.clone();
-    					let vote_count = omni_list.return_balance(vote_pubclone1);
-    					the_tallybalance.push(vote_count);
-    					the_tally.push(voter.vote_message.to_string());
-    					let vote_address = vote_pubclone.to_string();
-    					let the_piece = VotePiece {
-							vote_hash: vote_hash.to_vec(),
-							vote_count: vote_count,
-							vote_address: vote_address,
-						};
-						the_pieces.push(the_piece);
-
-    				} else {
+    						let vote_hash = voter.return_votehash();
+    						let vote_pubclone = voter.vote_publickey.clone();
+    						let vote_pubclone1 = voter.vote_publickey.clone();
+    						let vote_count = omni_list.return_balance(vote_pubclone1);
+    						the_tallybalance.push(vote_count);
+    						the_tally.push(voter.vote_message.to_string());
+    						let vote_address = vote_pubclone.to_string();
+    						let the_piece = VotePiece {
+								vote_hash: vote_hash.to_vec(),
+								vote_count: vote_count,
+								vote_address: vote_address,
+							};
+							the_pieces.push(the_piece);
+    					
+       				} else {
     					println!("something was wrong with that vote");
     				}
     			}
@@ -390,7 +391,11 @@ impl VotingOutcome {
 		}
 	}
 
-	pub fn vote_check(voteround: String) -> bool {
+	pub fn vote_check(voteround: String, proposal: String) -> bool {
+		let proposal = PollRound::poll_fromjson(proposal);
+		let origin_pollhash = proposal.return_pollhashstring();
+		let origin_choices = proposal.return_pollchoices();
+
 		let vote = VoteRound::vote_fromjson(voteround);
 		let vote_hash = vote.return_votehash();
 		let mut votehash: Vec<u8> = Vec::new();
@@ -408,44 +413,70 @@ impl VotingOutcome {
 			pollhash.push(*a);
 		}
 
-		let pollhash_clone = pollhash.clone();
-		let pollhash_clone2 = pollhash.clone();
+		if origin_pollhash == vote.return_pollhashstring() {
+			let mut choice_match = false;
 
-		let vote_msg = vote.return_votemsg();
-		let vote_index = vote.return_voteindex();
+			for choice in origin_choices {
+				if choice.to_string() == vote.return_votemsg() {
+					choice_match = true;
+					break;
+					println!("choice is true");
+				}
+			}
 
-		let sig = vote.return_signature();
-		let mut signa: Vec<u8> = Vec::new();
-		for a in sig.iter() {
+			if choice_match == false {
 
-			signa.push(*a);
-		}
-		let the_sigclone = signa.clone();
+				println!("choice is false");
+				return false;
+			} else {
+				let pollhash_clone = pollhash.clone();
+				let pollhash_clone2 = pollhash.clone();
 
-		let origin_key = KeyPair::recover(signa, votehash_clone);
-		let hash160 = KeyPair::address_base58(&origin_key);
-		let vote_hash_elem = VoteHash {
-			poll_hash: pollhash_clone,
-			vote_message: vote_msg,
-			vote_msgindex: vote_index,
-			vote_publickey: hash160,
-		};
-		let vote_ahash = vote_hash_elem.return_hash();
-		let vote_hashclone3 = vote_ahash.clone();
-		let vote_hashbytes = vote_ahash.into_bytes();
-		if vote_hashbytes == votehash_clone2 {
-			println!("true");
+				let vote_msg = vote.return_votemsg();
+				let vote_index = vote.return_voteindex();
+
+				let sig = vote.return_signature();
+				let mut signa: Vec<u8> = Vec::new();
+				for a in sig.iter() {
+
+					signa.push(*a);
+				}
+				let the_sigclone = signa.clone();
+
+				let origin_key = KeyPair::recover(signa, votehash_clone);
+				let hash160 = KeyPair::address_base58(&origin_key);
+				let vote_hash_elem = VoteHash {
+					poll_hash: pollhash_clone,
+					vote_message: vote_msg,
+					vote_msgindex: vote_index,
+					vote_publickey: hash160,
+				};
+				let vote_ahash = vote_hash_elem.return_hash();
+				let vote_hashclone3 = vote_ahash.clone();
+				let vote_hashbytes = vote_ahash.into_bytes();
+				if vote_hashbytes == votehash_clone2 {
+					println!("true");
+				} else {
+					println!("something is not right here hash error on a vote");
+					return false;
+				}
+				let sig_verification = KeyPair::verify(&origin_key, the_sigclone, vote_hashclone3.into_bytes());
+				if sig_verification == true {
+					println!("all good here");
+					return true;
+				} else {
+					println!("signature error on a vote");
+					return false;
+				}
+			}
 		} else {
-			println!("something is not right here hash error on a vote");
+
+				println!("vote poll hash is false");
 			return false;
 		}
-		let sig_verification = KeyPair::verify(&origin_key, the_sigclone, vote_hashclone3.into_bytes());
-		if sig_verification == true {
-			println!("all good here");
-			return true;
-		} else {
-			println!("signature error on a vote");
-			return false;
-		}
+
+		
+
+		
 	}
 }

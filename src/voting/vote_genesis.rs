@@ -335,6 +335,18 @@ impl VoteRound {
 		&self.poll_hash[..]
 	}
 
+	///returns the poll hash from the PollRound struct
+	pub fn return_pollhashstring(&self) -> String {
+		let poll_hash = &self.poll_hash;
+		let mut pollhash: Vec<u8> = Vec::new();
+		for a in poll_hash.iter() {
+
+			pollhash.push(*a);
+		}
+		let hash = String::from_utf8(pollhash).unwrap();
+		hash
+	}
+
 	///returns the signature from the VoteRound struct
 	pub fn return_signature(&self) -> &[u8] {
 		&self.vote_signature

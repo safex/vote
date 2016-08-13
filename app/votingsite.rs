@@ -131,15 +131,28 @@ fn main() {
 		};
 
 		//we need to receive the vote, as well as the proposal name
+		
 
 		if request_read != "oops" {
 			let default = ReceiveVote { vote: VoteRound::new(), proposal_directory: "".to_string() };
 			let received_vote: ReceiveVote = json::decode(&payload).unwrap_or(default);
 
-			if VotingOutcome::vote_check(received_vote.vote.return_jsonstring()) == true {
+			let mut the_home_dir = String::new();
+    				match env::home_dir() {
+        				Some(ref p) => the_home_dir = p.display().to_string(),
+        				None => println!("Impossible to get your home dir!")
+    				}
+
+
+			let proposal_dir = received_vote.proposal_directory.clone();
+    		let poll_root =  the_home_dir + "/proposals/" + &proposal_dir;
+    		let poll_root_more = poll_root.to_string() + "/" + &proposal_dir + ".poll";
+			let proposal = PollRound::return_pollfromfile(Path::new(&poll_root_more));
+			let proposal_string = proposal.return_jsonstring();
+			if VotingOutcome::vote_check(received_vote.vote.return_jsonstring(), proposal_string) == true {
 				let vote = received_vote.vote;
 
-				if VotingOutcome::check_duplicatevote(received_vote.proposal_directory.to_string(), vote.return_publickey()) == false {
+				if VotingOutcome::check_duplicatevote(poll_root, vote.return_publickey()) == false {
 					let vote_hash = vote.return_votehash();
 					let mut votehash: Vec<u8> = Vec::new();
 					for a in vote_hash.iter() {
