@@ -35,9 +35,14 @@ import {RemoveSpaces} from "./removespace.ts";
 		<br>
 		<br>
 		<h2> Results </h2>
-		<ul>
-				<li *ngFor="let response of result_responses; let result of result_results">
-					{{ response }} : {{ result }}
+		<ul style="display: inline-block;">
+				<li *ngFor="let response of result_responses">
+					{{ response }} :
+				</li>
+		</ul>
+		<ul style="display: inline-block;">
+				<li *ngFor="let result of result_results">
+					{{ result }}
 				</li>
 		</ul>
 

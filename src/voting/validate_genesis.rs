@@ -27,7 +27,7 @@ use std::fs::OpenOptions;
 use std::io::Read;
 use std::io::{BufRead};
 
-#[derive(Clone, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct VotingOutcome {
 	proposal_title: String,
 	responses: Vec<String>,
@@ -35,7 +35,7 @@ pub struct VotingOutcome {
 	participating_addresses: Vec<VotePiece>,
 }
 
-#[derive(Clone, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Clone, RustcDecodable, RustcEncodable)]
 pub struct VotePiece {
 	vote_hash: Vec<u8>,
 	vote_count: i32,
@@ -153,7 +153,6 @@ impl VotingOutcome {
 
 
     			let mut final_count: Vec<i32> = Vec::new();
-    			let count_clone = final_count.clone();
     			let mut index = 0;
     			for choice in poll_choices {
     				final_count.push(0);
@@ -166,6 +165,7 @@ impl VotingOutcome {
     				index += 1;
     			}
 
+    			let count_clone = final_count.clone();
     			let final_outcome = VotingOutcome {
     				proposal_title: proposal_title,
     				responses: poll_choicesclone2,
@@ -177,7 +177,7 @@ impl VotingOutcome {
     				println!("{:?}", poll_choicesclone[a]);
     			}
 
-
+    			println!("{:?}", &final_outcome);
     			final_outcome
     		}	else {
     			empty_outcome
