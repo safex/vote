@@ -29,7 +29,7 @@ import {RemoveSpaces} from "./removespace.ts";
 		<br><b>Origin Public Key:</b>
 			<br>{{ origin_pubkey }}
 
-		<br><button>Download Proposal File for Voting</button>
+		<br><div id="container"></div>
 
 		<br><a href="/voteproposal/{{ nospace_title }}"><button>Vote on this Proposal</button></a>
 		<br>
@@ -89,6 +89,11 @@ export class ViewProposalComponent {
 					self.responses = data.responses;
 					self.origin_pubkey = data.origin_pubkey;
 					self.hash = data.poll_hash;	
+					console.log(self.proposal);
+					var contents = JSON.stringify(data);
+					var dater = "text/json;charset=utf-8," + encodeURIComponent(contents);
+					var link = document.getElementById("container");
+					link.innerHTML = '<a href="data:' + dater + '" download="proposal.poll">Download Proposal File</a>';
 				},
 				error => console.log("error"),
 				() => console.log("finished")
@@ -107,6 +112,7 @@ export class ViewProposalComponent {
 				() => console.log("finished")
 			);
 	}
+
 
 	ngOnInit() {
 		var currentLocation = window.location;
