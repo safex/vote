@@ -5,13 +5,25 @@ import {VoteService} from "./vote.service";
 @Component({
 	selector: 'vote',
 	template: `
-		<div class="header">
-	<h3 class="main-head">Voting Application</h3>
-	    <div class="head-strip">
 
+
+
+
+			<div class="box">
+		<div class="header-container">
+		<div class="logo">
+			<img src="img/safex-logo.png">
+		</div>
+	<h3 class="main-head">Voting Application</h3>
+		</div>
+
+	    <div class="outer-box">
+   	
 		<p class="attribute">Your Public Key: <span class="text-value">{{pubKey}}</span></p>
-		
-		<input class="input-field" placeholder="Input your Wallet Import Format (WIF) private key here" #importbox><button class="small-btn" (click)="postWIF(importbox)">Import Key</button><br>
+
+	<div class="input-area"> 	
+		<input placeholder="Input your Wallet Import Format (WIF) private key" #importbox><button class="small-btn float-right" (click)="postWIF(importbox)">Import</button>
+	</div>
 
 		<p class="attribute"> Upload the proposal you wish to vote on </p>
 		<input type="file" (change)="changeListener($event)" #input/>
@@ -19,7 +31,8 @@ import {VoteService} from "./vote.service";
 		<p class="attribute">Proposal Title: <span class="text-value">{{ title }}</span></p>
 		<p class="attribute">Proposal Terms: <span class="text-value">{{ the_terms }}</span></p>
 
-		<p class="attribute">Responses are:</p> 
+		<p class="attribute">Response is:</p> 
+
 		<ul>
 			<li class="answers" *ngFor="let response of responses; let i=index">
 				 {{ response }} <button class="small-btn" (click)="makeSelection(i)">Select {{ i }}</button>
@@ -28,13 +41,17 @@ import {VoteService} from "./vote.service";
 
 		<p class="attribute">Vote Selection: <span class="text-value">{{ selection }}</span></p> 
 
-		<button class="small-btn" (click)="makeVote()">Generate Vote</button>
+		<button class="small-btn first" (click)="makeVote()">1. Generate Vote</button>
 
-		<button class="small-btn" (click)="saveVote()">Save Vote To Desktop</button>
+		<button class="small-btn" (click)="saveVote()">2. Save Vote</button>
 
 		<br><br><div id="container"></div>
+
 	</div>
-	</div>
+	</div>	
+
+
+		
 	`,
 	providers: [VoteService],
 	styleUrls: ['css/bootstrap.css', 'css/style.css']
@@ -95,7 +112,7 @@ export class VoteComponent {
 				contents = JSON.stringify(data);
 				var dater = "text/json;charset=utf-8," + encodeURIComponent(contents);
 				var link = document.getElementById("container");
-				link.innerHTML = '<a href="data:' + dater + '" download="vote.vote">Save Vote File</a>';
+				link.innerHTML = '<a href="data:' + dater + '" download="vote.vote">3. Save Vote File</a>';
 			},
 			error => console.log("error getting data here its fine"),
 			() => console.log("finished")
