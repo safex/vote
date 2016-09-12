@@ -1,0 +1,229 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900);
+
+
+html {
+    height: 100%;
+    overflow-y: hidden;
+}
+
+body {
+    background-image: url(../img/1.jpg);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+
+    color: #fff; 
+    font-family: 'Source Sans Pro', sans-serif;
+    padding: 0px !important;
+    margin: 0px !important;
+    font-size:14px; 
+    direction: ltr;
+  }
+
+
+/* overides metro scrolbars in IE10 and makes them look like a default scrollbar */
+@-ms-viewport{ 
+  width: auto !important; 
+}
+
+div.logo {
+  width: 50px;
+  display: inline-block;
+}
+
+div.logo img{
+  width: 50px;
+  display: inline-block;
+}
+
+/***
+General typography 
+***/
+
+h3 {  
+  display: inline-block;
+  vertical-align: -13px;
+}
+
+h3 small, h4 small, h5 small {
+  color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 200;
+}
+
+h1.block, h2.block, h3.block, h4.block, h5.block, h6.block {
+  padding-bottom: 10px;
+}
+
+a {
+  text-shadow: none !important;
+  color: #fff;
+}
+
+
+p {
+  color: #fff;
+}
+
+p.attribute {
+  font-weight: 600;
+  font-size: 19px;
+}
+
+p.attribute span.text-value {
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.box {
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2%;
+}
+
+.header-container {
+  text-align: center;
+}
+
+.box h3.main-head {
+  text-align: center;
+  font-size: 3em;
+  margin: 0em 0em 1.3em 0.4em;
+  color: #fff;
+}
+.outer-box {
+  background-color: rgba(255,255,255,0.2);
+  padding: 60px 40px;
+  border-radius: 4px;
+  margin: 0;
+  position: relative;
+}
+
+
+input:first-of-type {
+  margin: 0 10px 50px 0;
+}
+
+div.input-area {
+  width: 100%;
+  margin: 0 auto;
+}
+
+input {
+  width: 80%;
+  margin-bottom: 20px;
+  padding: 8px;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 14px;
+  color: #fff;
+}
+
+a button {
+  margin: 10px 0;
+}
+
+button.small-btn.float-right {
+  float: right;
+}
+
+button.small-btn {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  /*background: #DAD8D8;*/
+  background-color: transparent;
+  border: 2px solid #fff;
+  display: inline-block;
+  padding: 9px;
+  border-radius: 0;
+}
+
+button.small-btn.first  {
+  margin: 0 6px 0 0;
+}
+
+button.small-btn:hover {
+  background:#fff;
+  color: #8c8c8c;
+  text-decoration:none;
+}
+
+/*.bann-rit {
+  clear: both;
+  display: block;
+  margin: 1.3em 0em 0em 0em;
+  box-shadow: none;
+}
+.bann-rit a, .bann-rit.get {
+  font-size: 0.95em;
+  font-weight: 600;
+
+  padding: 0.8em;
+  border-radius: 0;
+}
+.bann-rit a:hover, .bann-rit.get:hover{
+	background:#8E8C8C;
+	text-decoration:none;
+}*/
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+input[type=radio] {
+    display:none;
+  }
+
+input[type=radio] + label {
+    display:inline-block;
+    margin:-2px;
+    padding: 4px 12px;
+    margin-bottom: 60px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #8c8c8c;
+    text-align: center;
+    /*text-shadow: 0 1px 1px rgba(255,255,255,0.75);*/
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #e6e6e6;
+    /*background-color: rgba(255,255,255,0.8);*/
+    /*background-image: -moz-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e6e6e6));
+    background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -o-linear-gradient(top,#fff,#e6e6e6);
+    background-image: linear-gradient(to bottom,#fff,#e6e6e6);*/
+    background-repeat: repeat-x;
+    border: 1px solid #ccc;
+    border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    border-bottom-color: #b3b3b3;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffe6e6e6',GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    /*-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);*/
+  }
+
+  input[type=radio]:hover + label {
+      background-color:  #fff;
+  }
+
+   input[type=radio]:checked + label {
+       background-image: none;
+    outline: 0;
+    /*-webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);*/
+    /*box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);*/
+      /*background-color:#e0e0e0;*/
+      background-color:  #fff;
+  }
+
+

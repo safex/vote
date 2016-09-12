@@ -12,43 +12,58 @@ import {RemoveSpaces} from "./removespace.ts";
 	selector: 'proposalview',
 	pipes: [RemoveSpaces],
 	template: `
-		<h1>Safe Exchange | Proposal View</h1>
-		<a href="/">Home</a>
-		<a href="/submitproposal">Submit Proposal</a>
 
-		<br><b>Title:</b> 
-			<br>{{ title }}
-		<br><b>The Terms:</b>
-			<br>{{ the_terms }}
-		<br><b>Responses:</b>
-			<ul>
-				<li *ngFor="let resp of responses">
+		<div class="box">
+		<div class="header-container">
+		<div class="logo">
+			<img src="img/safex-logo.png">
+		</div>
+	<h1 class="main-head">Safe Exchange | Proposal View</h1>
+		</div>
+
+	    <div class="outer-box">
+
+	    	<a href="/"><button class="small-btn first">Home</button></a>
+		<a href="/submitproposal"><button class="small-btn">Submit Proposal</button></a>
+		<br><p class="attribute">Title:</p> 
+			{{ title }}
+		<br><p class="attribute">The Terms:</p>
+			{{ the_terms }}
+		<br><p class="attribute">Responses:</p>
+
+		<ul clas="list-unstyled">
+			<li *ngFor="let resp of responses">
 					{{ resp }}
-				</li>
-			</ul>
-		<br><b>Origin Public Key:</b>
-			<br>{{ origin_pubkey }}
+			</li>
+		</ul>
 
+	<br><p class="attribute">Origin Public Key:</p>
+			{{ origin_pubkey }}
 		<br><div id="container"></div>
-
-		<br><a href="/voteproposal/{{ nospace_title }}"><button>Vote on this Proposal</button></a>
+		<br><a href="/voteproposal/{{ nospace_title }}"><button class="small-btn">Vote on this Proposal</button></a>
 		<br>
 		<br>
-		<h2> Results </h2>
-		<ul style="display: inline-block;">
+		<h2>Results</h2>
+		<ul>
 				<li *ngFor="let response of result_responses">
 					{{ response }} :
 				</li>
 		</ul>
-		<ul style="display: inline-block;">
+		<ul>
 				<li *ngFor="let result of result_results">
 					{{ result }}
 				</li>
-		</ul>
+		</ul>	
+		
+   	
+	</div>
+	</div>	
+
+
 
 	`,
 	directives: [],
-	styleUrls: []
+	styleUrls: ['css/viewprop/css/bootstrap.css', 'css/viewprop/css/style.css']
 })
 
 export class ViewProposalComponent {

@@ -9,17 +9,30 @@ import {HTTP_PROVIDERS} from "angular2/http";
 @Component({
 	selector: 'submitprop',
 	template: `
-		<h1>Safe Exchange | Submit Proposal</h1>
-		<a href="/">View Proposals</a>
 
-		<br><input type="file" (change)="changeListener($event)" #input/>
+		<div class="box">
+		<div class="header-container">
+		<div class="logo">
+			<img src="img/safex-logo.png">
+		</div>
+			<h1 class="main-head">Safe Exchange | Submit Proposal</h1>
+		</div>
 
+	    <div class="outer-box">
+
+	    	<a href="/"><button class="small-btn first">View Proposals</button></a>
+
+	    	<br><input type="file" (change)="changeListener($event)" #input/>
 		<br>{{ what_happen }}
+		
+   	
+	</div>
+	</div>
 
 		
 	`,
 	directives: [],
-	styleUrls: []
+	styleUrls: ['css/submitprop/css/bootstrap.css', 'css/submitprop/css/style.css']
 })
 
 export class AppComponent {

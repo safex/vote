@@ -9,26 +9,32 @@ import {HTTP_PROVIDERS} from "angular2/http";
 @Component({
 	selector: 'voteproposal',
 	template: `
-		<h1>Safe Exchange | Submit Vote</h1>
-		<a href="/">View Proposals</a>
+			<div class="box">
+		<div class="header-container">
+		<div class="logo">
+			<img src="img/safex-logo.png">
+		</div>
+	<h1 class="main-head">Safe Exchange | Submit Vote</h1>
+		</div>
+
+	    <div class="outer-box">
+
+	    	<a href="/"><button class="small-btn first">View Proposals</button></a>
 
 		<br><input type="file" (change)="changeListener($event)" #input/>
-
 		<br>{{ what_happen }}
-
 		<br>
 		<br>
 		<br>
 		Submitting Vote for:
-
 		<br>
 		<br>
-		<br><b>Title:</b> 
+		<br><p class="attribute">Title:</p> 
 			<br>{{ title }}
-		<br><b>The Terms:</b>
+		<br><p class="attribute">The Terms:</p>
 			<br>{{ the_terms }}
 		<br>
-			<br><b>Responses:</b>
+			<br><p class="attribute">Responses:</p>
 			<ul>
 				<li *ngFor="let resp of responses">
 					{{ resp }}
@@ -36,9 +42,15 @@ import {HTTP_PROVIDERS} from "angular2/http";
 			</ul>
 
 		
+		
+   	
+	</div>
+	</div>	
+
+		
 	`,
 	directives: [],
-	styleUrls: []
+	styleUrls: ['css/voteprop/css/bootstrap.css', 'css/voteprop/css/style.css']
 })
 
 export class AppComponent {

@@ -11,21 +11,34 @@ import {RemoveSpaces} from "./removespace.ts";
 	selector: 'app',
 	pipes: [RemoveSpaces],
 	template: `
-		<h1>Safe Exchange Community Voting</h1>
-		<a href="/">Home</a>
-		<a href="/submitproposal">Submit Proposal</a>
+		<div class="box">
+		<div class="header-container">
+		<div class="logo">
+			<img src="img/safex-logo.png">
+		</div>
+	<h1 class="main-head">Safe Exchange Community Voting</h1>
+		</div>
 
-		<ul>
+	    <div class="outer-box">
+
+	    	<a href="/"><button class="small-btn first">Home</button></a>
+		<a href="/submitproposal"><button class="small-btn">Submit Proposal</button></a>
+		<ul clas="list-unstyled">
 			<li *ngFor="let proposal of proposals">
 				<br>{{ proposal.title | json }} 
 				<br>{{ proposal.hash | json }} 
-				<br><a href="/viewproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button>View Proposal</button></a>
-				<br><a href="/voteproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button>Vote on this Proposal</button></a>
+				<br>
+				<a href="/viewproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button class="small-btn first">View Proposal</button></a>
+				<a href="/voteproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button class="small-btn">Vote on this Proposal</button></a>
 			</li>
 		</ul>
+   	
+	</div>
+	</div>	
 
 	`,
-	directives: []
+	directives: [],
+	styleUrls: ['css/home/css/bootstrap.css', 'css/home/css/style.css']
 })
 
 export class AppComponent {
