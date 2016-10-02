@@ -5,24 +5,23 @@ use vote::utils::get_address_methods::OmniList;
 use vote::voting::poll_genesis::{PollRound, PollHash, PollPersona};
 use vote::voting::vote_genesis::{VoteRound};
 use vote::voting::validate_genesis::{VotingOutcome};
+use vote::utils::get_blockheight::return_blockheight;
 
 use safex::genesis::key_generation::KeyPair;
 
 fn main() {
     //PollRound::make_poll();
     //VoteRound::form_vote();
-    println!("{:?}", VotingOutcome::validate_outcome());
+  //  println!("{:?}", VotingOutcome::validate_outcome());
 
 
+    println!("{:?}", return_blockheight());
 
-
-
-/*
     let the_keys = KeyPair::create().unwrap();
     let omni_list = get_omniwalletorg(56);
     let our_keys = PollPersona::import_keys();
     let keys = our_keys.return_keys();
-    let our_poll = PollRound::new_wparams("hello".to_string(), 1, 2, vec!["hello".to_string(), "goodbye".to_string()], 3, &keys, omni_list);
+    let our_poll = PollRound::new_wparams("hello".to_string(), "hello".to_string(), 1, 2, vec!["hello".to_string(), "goodbye".to_string()], 3, &keys, omni_list);
     //our_poll.write_poll();
 
 	//number 56 equates to Omni Smart Property #56 "SafeExchangeCoin"
@@ -45,5 +44,5 @@ fn main() {
                 println!("safe exchange coin balance: {:?}", &list_elements[thethings].balance);
             }
         }
-*/
+
 }

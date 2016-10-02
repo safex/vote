@@ -3,6 +3,7 @@ use safex::genesis::key_generation::KeyPair;
 use utils::get_address_methods::OmniList;
 use utils::get_address_methods::get_omniwalletorg;
 use utils::dirs::{make_app_root_dir, touch};
+use utils::get_blockheight::return_blockheight;
 
 use rustc_serialize::{Decodable, Decoder};
 use rustc_serialize::json::{self, ToJson, Json};
@@ -20,6 +21,7 @@ use std::fs::OpenOptions;
 use std::io::Read;
 use std::io::{BufRead};
 use std::cell::RefCell;
+use std::process;
 
 pub struct PollPersona {
 	poller_keys: KeyPair,
@@ -55,9 +57,9 @@ impl PollPersona {
 pub struct PollRound {
 	title: String,
 	//when the voting round begins
-	start_blockheight: i32,
+	start_blockheight: u32,
 	//when the voting round ends
-	end_blockheight: i32,
+	end_blockheight: u32,
 	//the word describing the proposal
 	the_terms: String,
 	//the possible response strings
@@ -77,8 +79,8 @@ pub struct PollRound {
 #[derive(Clone, RustcDecodable, RustcEncodable)]
 pub struct PollHash {
 	pub title: String,
-	pub start_block: i32,
-	pub end_block: i32,
+	pub start_block: u32,
+	pub end_block: u32,
 	pub the_terms: String,
 	pub responses: Vec<String>,
 	pub sp_num: i32,
@@ -117,8 +119,8 @@ impl PollRound {
 	pub fn new_wparams(
 		title: String,
 		the_terms: String, 
-		start_block: i32, 
-		end_block: i32, 
+		start_block: u32, 
+		end_block: u32, 
 		responses: Vec<String>, 
 		sp_num: i32, 
 		keys: &KeyPair, 
@@ -222,6 +224,8 @@ impl PollRound {
 
     		let mut select = 0;
     		let mut response_vec = Vec::new();
+
+    		let mut response_clone = response_vec.clone();
 			println!("you're going to enter text based selections now these are the answers people choose as a vote");
     		while select == 0 {
     			println!("please enter a choice in the poll enter without quotes \"imdonenow\" when you no longer want to add anymore vote choices");
@@ -237,12 +241,26 @@ impl PollRound {
     				select += 1;
     			}
     		}
-    		let mut response_clone = response_vec.clone();
+    		let now_blockheight = return_blockheight();
+    		println!("please select an end date for your poll based on blockheight it must be greater than the current block height");
+    		println!("The current blockheight is {:?}", now_blockheight);
+    		println!("1 blockheight unit is equal to 10 minutes so 144 blocks = 1 day");
+			let mut end_block = String::new();
+    		let stdin3 = io::stdin();
+    		stdin3.lock().read_line(&mut end_block).unwrap();
+    		let endblock_trim = end_block.trim_right_matches("\n");
+    		let endblock_parse: u32 = endblock_trim.parse().ok().expect("error in parsing your end block");
+    		if endblock_parse < now_blockheight {
+    			println!("end block time must be greater than the current blockheight");
+    			process::exit(1);
+    		}
+
+
     		println!("making poll hash");
     		let the_pollhash_elems = PollHash {
     			title: title_inclone.to_string(),
-				start_block: 0,
-				end_block: 0,
+				start_block: now_blockheight,
+				end_block: endblock_parse,
 				the_terms: terms_inclone.to_string(),
 				responses: response_vec,
 				sp_num: sp_index,
@@ -253,12 +271,13 @@ impl PollRound {
     		println!("made poll hash");
 			let poll_hashclone = the_pollhash.clone();
 			let poll_hash_sig = KeyPair::sign(&our_persona.poller_keys.secret, the_pollhash.into_bytes());
+			let block_height = return_blockheight();
     		println!("signed poll hash");
 			let the_poll = PollRound {
     			title: title_inclone2.to_string(),
-				start_blockheight: 0,
+				start_blockheight: block_height,
 				//when the voting round ends
-				end_blockheight: 0,
+				end_blockheight: endblock_parse,
 				//the word describing the proposal
 				the_terms: terms_inclone2.to_string(),
 				//the possible response strings
@@ -368,6 +387,15 @@ impl PollRound {
 	pub fn return_eligibleaddresses(&self) -> &OmniList {
 		&self.eligible_addresses
 	}
+
+	pub fn return_endblockheight(&self) -> u32 {
+		self.end_blockheight
+	}
+
+	pub fn return_startblockheight(&self) -> u32 {
+		self.start_blockheight
+	}
+
 
 
 	///writes the poll to a file

@@ -16,6 +16,7 @@ import {ProposalService} from "./proposal.service";
 		<br><br><input placeholder="Enter the title for the proposal" #title><br>
 
 		<br><br><textarea placeholder="Enter the terms of the proposal" #terms></textarea><br>
+		<br><br><textarea placeholder="Enter a blockheight to end the proposal" #end_date></textarea><br>
 
 		<br><br><input placeholder="Here enter a choice for people to select in voting" #choice><button (click)="addChoice(choice)">Add Choice</button><br>
 
@@ -25,7 +26,7 @@ import {ProposalService} from "./proposal.service";
 			</li>
 		</ul>
 
-		<br><br><button (click)="setProposal(title, terms)">Create Proposal</button>
+		<br><br><button (click)="setProposal(title, terms, end_date)">Create Proposal</button>
 
 		<button class="small-btn" (click)="saveProposal()">Save Proposal To Desktop</button>
 
@@ -43,6 +44,7 @@ import {ProposalService} from "./proposal.service";
 export class ProposalComponent {
 	pubKey: string;
 	title: string;
+	end_date: string;
 	the_terms: string;
 	choices: string[] = [];
 
@@ -70,15 +72,18 @@ export class ProposalComponent {
 		);
     }
 
-	setProposal(title, terms) {
+	setProposal(title, terms, endday) {
 		this.title = title.value;
 		this.the_terms = terms.value;
+		this.end_date = endday.value;
 		var the_title = "title";
 		var term = "terms";
 		var choose = "choices";
+		var end_date = "end_date";
 		var json = {};
 		json[the_title] = this.title;
 		json[term] = this.the_terms;
+		json[end_date] = this.end_date;
 		json[choose] = this.choices;
 		this._proposalService.make_proposal(JSON.stringify(json))
 		.subscribe(

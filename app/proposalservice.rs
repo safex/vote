@@ -15,6 +15,7 @@ use vote::voting::poll_genesis::{PollRound};
 use vote::voting::vote_genesis::{VoteRound};
 use vote::utils::get_address_methods::OmniList;
 use vote::utils::get_address_methods::get_omniwalletorg;
+use vote::utils::get_blockheight::return_blockheight;
 
 use iron::prelude::*;
 use iron::{status, headers};
@@ -45,6 +46,7 @@ struct PartialProposal {
 	title: String,
 	terms: String,
 	choices: Vec<String>,
+	end_date: u32,
 }
 
 fn main() {
@@ -140,8 +142,9 @@ fn main() {
 		let mut payload = String::new();
 		request.body.read_to_string(&mut payload).unwrap();
 		let partial_prop: PartialProposal = json::decode(&payload).unwrap();
+
 		let omnis = get_omniwalletorg(56);
-		*prop = PollRound::new_wparams(partial_prop.title, partial_prop.terms, 0, 0, partial_prop.choices, 56, keys, omnis);
+		*prop = PollRound::new_wparams(partial_prop.title, partial_prop.terms, return_blockheight(), partial_prop.end_date, partial_prop.choices, 56, keys, omnis);
 
 		let mut response = Response::with((status::Ok, "all good here"));
 		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
