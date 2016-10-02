@@ -29,6 +29,8 @@ import {RemoveSpaces} from "./removespace.ts";
 			{{ title }}
 		<br><p class="attribute">The Terms:</p>
 			{{ the_terms }}
+		<br><p class="attribute">Ending Blockheight:</p>
+			{{ end_date }}
 		<br><p class="attribute">Responses:</p>
 
 		<ul clas="list-unstyled">
@@ -70,6 +72,7 @@ export class ViewProposalComponent {
 	title: string;
 	nospace_title: string;
 	the_terms: string;
+	end_block: string
 	responses: string[] = [];
 	origin_pubkey: string;
 	hash: string;
@@ -104,6 +107,7 @@ export class ViewProposalComponent {
 					self.responses = data.responses;
 					self.origin_pubkey = data.origin_pubkey;
 					self.hash = data.poll_hash;	
+					self.end_date = data.end_blockheight;
 					console.log(self.proposal);
 					var contents = JSON.stringify(data);
 					var dater = "text/json;charset=utf-8," + encodeURIComponent(contents);
