@@ -30,7 +30,7 @@ import {RemoveSpaces} from "./removespace.ts";
 		<br><p class="attribute">The Terms:</p>
 			{{ the_terms }}
 		<br><p class="attribute">Ending Blockheight:</p>
-			{{ end_date }}
+			{{ end_block }}
 		<br><p class="attribute">Responses:</p>
 
 		<ul clas="list-unstyled">
@@ -72,7 +72,7 @@ export class ViewProposalComponent {
 	title: string;
 	nospace_title: string;
 	the_terms: string;
-	end_block: string
+	end_block: string;
 	responses: string[] = [];
 	origin_pubkey: string;
 	hash: string;
@@ -88,7 +88,6 @@ export class ViewProposalComponent {
 		return this._http.post('http://localhost:3100/return_proposal', body)
 			.map(res => res.json())
 	}
-
 
 	return_results(body) {
 		return this._http.post('http://localhost:3100/return_results', body)
@@ -107,7 +106,7 @@ export class ViewProposalComponent {
 					self.responses = data.responses;
 					self.origin_pubkey = data.origin_pubkey;
 					self.hash = data.poll_hash;	
-					self.end_date = data.end_blockheight;
+					self.end_block = data.end_blockheight;
 					console.log(self.proposal);
 					var contents = JSON.stringify(data);
 					var dater = "text/json;charset=utf-8," + encodeURIComponent(contents);
@@ -124,6 +123,10 @@ export class ViewProposalComponent {
 		this.return_results(stringified)
 			.subscribe(
 				data => {
+					console.log("these are the responses " + data.responses);
+					console.log(data.responses);
+					console.log("these are the vote totals " + data.tally);
+					console.log(data.tally);
 					self.result_responses = data.responses;
 					self.result_results = data.tally;
 				},
