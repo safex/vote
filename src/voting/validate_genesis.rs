@@ -361,11 +361,13 @@ impl VotingOutcome {
 		let omnilist = poll.return_eligibleaddresses();
 		let omnijson = omnilist.return_json();
 		let omnilist = OmniList::omnilist_fromjson(omnijson);
+		let start_blocks = poll.return_startblockheight();
+		let end_blocks = poll.return_endblockheight();
 
 		let the_pollhash_elems = PollHash {
 			title: title_str,
-			start_block: 0,
-			end_block: 0,
+			start_block: start_blocks,
+			end_block: end_blocks,
 			the_terms: terms_str,
 			responses: choice_vec,
 			sp_num: sp_nu,
