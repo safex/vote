@@ -408,6 +408,7 @@ impl VotingOutcome {
 
 		let votehash_clone = votehash.clone();
 		let votehash_clone2 = votehash.clone();
+		let votehash_clone3 = votehash.clone();
 		let poll_hash = vote.return_pollhash();
 		let mut pollhash: Vec<u8> = Vec::new();
 		for a in poll_hash.iter() {
