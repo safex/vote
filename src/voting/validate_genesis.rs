@@ -409,6 +409,7 @@ impl VotingOutcome {
 		let votehash_clone = votehash.clone();
 		let votehash_clone2 = votehash.clone();
 		let votehash_clone3 = votehash.clone();
+		let votehash_clone4 = votehash.clone();
 		let poll_hash = vote.return_pollhash();
 		let mut pollhash: Vec<u8> = Vec::new();
 		for a in poll_hash.iter() {
@@ -437,6 +438,7 @@ impl VotingOutcome {
 				let pollhash_clone3 = pollhash.clone();
 
 				let vote_msg = vote.return_votemsg();
+				let vote_msg2 = vote.return_votemsg();
 				let vote_index = vote.return_voteindex();
 
 				let sig = vote.return_signature();
@@ -446,6 +448,7 @@ impl VotingOutcome {
 					signa.push(*a);
 				}
 				let the_sigclone = signa.clone();
+				let the_sigclone2 = signa.clone();
 
 				let origin_key = KeyPair::recover(signa, votehash_clone);
 				let hash160 = KeyPair::address_base58(&origin_key);
@@ -461,11 +464,11 @@ impl VotingOutcome {
 				if vote_hashbytes == votehash_clone2 {
 					println!("true");
 				} else {
-					let origin_key = KeyPair::recover(signa, votehash_clone);
+					let origin_key = KeyPair::recover(the_sigclone2, votehash_clone4);
 					let hash160 = KeyPair::address_base58compressed(&origin_key);
 					let vote_hash_elem = VoteHash {
-						poll_hash: pollhash_clone,
-						vote_message: vote_msg,
+						poll_hash: pollhash_clone3,
+						vote_message: vote_msg2,
 						vote_msgindex: vote_index,
 						vote_publickey: hash160,
 					};
