@@ -29,6 +29,7 @@ use std::io::{BufRead};
 pub struct VotePersona {
 	voter_keys: KeyPair,
 	voting_round: VoteRound,
+	compression: bool
 }
 
 
@@ -44,11 +45,18 @@ impl VotePersona {
     	persona
 	}
 	pub fn persona_fromstring(secret: String) -> VotePersona {
+		let mut cbool = false;
+		if secret.len() == 52 {
+			cbool = true;
+		} else if secret.len() == 51 {
+			cbool = false;
+		}
 		let new_keys = KeyPair::keypair_frombase58wif(secret);
 		let votings = VoteRound::new();
 		VotePersona {
 			voter_keys: new_keys,
 			voting_round: votings,
+			compression: cbool
 		}
 	}
 	pub fn return_keys(&self) -> &KeyPair {
@@ -100,12 +108,17 @@ impl VoteRound {
 	pub fn vote_newparam(
 		poll_round: String,
 		keys: &KeyPair,
-		vote_msgindex: i32) -> VoteRound {
+		vote_msgindex: i32, compression: bool) -> VoteRound {
 
 		let the_poll_clone = poll_round.clone();
 
 		let poll = PollRound::poll_fromjson(the_poll_clone);
-    	let key_hash160 = KeyPair::address_base58(&keys.public);
+		let mut key_hash160 = String::new();
+		if compression == true {
+    		key_hash160 = KeyPair::address_base58compressed(&keys.public);
+		} else if compression == false {
+    		key_hash160 = KeyPair::address_base58(&keys.public);
+		}
 		let addresses = poll.return_eligibleaddresses();
 		if addresses.check_existence(key_hash160) == true {
 			let poll = PollRound::poll_fromjson(poll_round);
@@ -123,7 +136,14 @@ impl VoteRound {
 			let vote_string = poll_choices[vote_msgindex as usize].to_string();
 			let vstring_clone = vote_string.clone();
 
-			let pk_string = KeyPair::address_base58(&keys.public);
+
+			let mut pk_string = String::new();
+
+			if compression == true {
+    			pk_string = KeyPair::address_base58compressed(&keys.public);
+			} else if compression == false {
+    			pk_string = KeyPair::address_base58(&keys.public);
+			}
 			let pkstr_clone = pk_string.clone();
 
 			let vote_hash = VoteHash {
@@ -177,8 +197,12 @@ impl VoteRound {
 			let vstring_clone = vote_string.clone();
 
 			let keys = persona.voter_keys;
-
-			let pk_string = KeyPair::address_base58(&keys.public);
+			let mut pk_string = String::new();
+			if persona.compression == true {
+				pk_string = KeyPair::address_base58compressed(&keys.public);
+			} else {
+				pk_string = KeyPair::address_base58(&keys.public);
+			}
 			let pkstr_clone = pk_string.clone();
 
 			let vote_hash = VoteHash {
@@ -235,7 +259,14 @@ impl VoteRound {
     	}
 
     	let the_poll: PollRound = json::decode(&file_string).unwrap();
-    	let key_hash160 = KeyPair::address_base58(&persona.voter_keys.public);
+    	let mut key_hash160 = String::new();
+
+		if persona.compression == true {
+			key_hash160 = KeyPair::address_base58compressed(&persona.voter_keys.public);
+		} else {
+			key_hash160 = KeyPair::address_base58(&persona.voter_keys.public);
+		}
+
 		let key_hashclone = key_hash160.clone();
 
 		let addresses = the_poll.return_eligibleaddresses();

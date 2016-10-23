@@ -5,10 +5,6 @@ extern crate safex;
 extern crate vote;
 extern crate hyper;
 
-
-
-
-
 use safex::genesis::key_generation::KeyPair;
 
 use vote::voting::poll_genesis::{PollRound};

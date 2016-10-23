@@ -81,7 +81,7 @@ fn main() {
 	router.get("/getpub", move |r: &mut Request| get_pub(r, &the_key.lock().unwrap(), &mut compressed_bool_arc_clone2.lock().unwrap()));
 	router.post("/setkey", move |r: &mut Request| set_key(r, &mut key_clone.lock().unwrap(), &mut compressed_bool_arc_clone.lock().unwrap()));
 
-	router.post("/setvote", move |r: &mut Request| set_vote(r, &key_clone2.lock().unwrap(), &the_poll.lock().unwrap(), &mut vote_clone.lock().unwrap()));
+	router.post("/setvote", move |r: &mut Request| set_vote(r, &key_clone2.lock().unwrap(), &the_poll.lock().unwrap(), &mut vote_clone.lock().unwrap(), &mut compressed_bool_arc.lock().unwrap()));
 	router.get("/getvote", move |r: &mut Request| get_vote(r, &the_vote.lock().unwrap()));
 
 	router.post("/setproposal", move |r: &mut Request| set_proposal(r, &mut poll_clone.lock().unwrap()));
@@ -144,11 +144,11 @@ fn main() {
 	}
 
 	///forms a vote based on the set proposal
-	fn set_vote(request: &mut Request, key: &KeyPair, proposal: &PollRound, vote: &mut VoteRound) -> IronResult<Response> {
+	fn set_vote(request: &mut Request, key: &KeyPair, proposal: &PollRound, vote: &mut VoteRound, cbool: &mut bool) -> IronResult<Response> {
 		let mut payload = String::new();
 		request.body.read_to_string(&mut payload).unwrap();
 		let vote_index: PartialVote = json::decode(&payload).unwrap();
-		*vote = VoteRound::vote_newparam(proposal.return_jsonstring(), key, vote_index.vote_index);
+		*vote = VoteRound::vote_newparam(proposal.return_jsonstring(), key, vote_index.vote_index, *cbool);
 
 		let mut response = Response::with((status::Ok, "all good here"));
 		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
