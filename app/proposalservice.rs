@@ -51,6 +51,11 @@ struct PartialProposal {
 
 fn main() {
 
+	let compressed_bool = false;
+	let compressed_bool_arc = Arc::new(Mutex::new(compressed_bool));
+	let compressed_bool_arc_clone = compressed_bool_arc.clone();
+	let compressed_bool_arc_clone2 = compressed_bool_arc.clone();
+
 	let place_key = KeyPair::create().unwrap();
 	let the_key = Arc::new(Mutex::new(place_key));
 	let key_clone = the_key.clone();
@@ -73,8 +78,8 @@ fn main() {
 
 	let mut router = Router::new();
 
-	router.get("/getpub", move |r: &mut Request| get_pub(r, &the_key.lock().unwrap()));
-	router.post("/setkey", move |r: &mut Request| set_key(r, &mut key_clone.lock().unwrap()));
+	router.get("/getpub", move |r: &mut Request| get_pub(r, &the_key.lock().unwrap(), &mut compressed_bool_arc_clone2.lock().unwrap()));
+	router.post("/setkey", move |r: &mut Request| set_key(r, &mut key_clone.lock().unwrap(), &mut compressed_bool_arc_clone.lock().unwrap()));
 
 	router.post("/setvote", move |r: &mut Request| set_vote(r, &key_clone2.lock().unwrap(), &the_poll.lock().unwrap(), &mut vote_clone.lock().unwrap()));
 	router.get("/getvote", move |r: &mut Request| get_vote(r, &the_vote.lock().unwrap()));
@@ -87,23 +92,43 @@ fn main() {
 
 
 	///returns the base58 address corresponding to imported WIF 
-	fn get_pub(_: &mut Request, key: &KeyPair) -> IronResult<Response> {
-		let pub_key = KeyPair::address_base58(&key.public);
-        let payload = json::encode(&pub_key).unwrap();
-        Ok(Response::with((status::Ok, payload)))
+	fn get_pub(_: &mut Request, key: &KeyPair, cbool: &mut bool) -> IronResult<Response> {
+		let mut pub_key = String::new();
+		if *cbool == true {
+			let pub_key = KeyPair::address_base58compressed(&key.public);
+        	let payload = json::encode(&pub_key).unwrap();
+        	Ok(Response::with((status::Ok, payload)))
+		} else {
+			let pub_key = KeyPair::address_base58(&key.public);
+        	let payload = json::encode(&pub_key).unwrap();
+        	Ok(Response::with((status::Ok, payload)))
+		}
     }
 
     ///imports the private key
-	fn set_key(request: &mut Request, key: &mut KeyPair) -> IronResult<Response> {
+	fn set_key(request: &mut Request, key: &mut KeyPair, cbool: &mut bool) -> IronResult<Response> {
 		let mut payload = String::new();
 		request.body.read_to_string(&mut payload).unwrap();
 		let import_hold: Import = json::decode(&payload).unwrap();
-		*key = KeyPair::keypair_frombase58wif(import_hold.wif);
-
-		let mut response = Response::with((status::Ok, "all good here"));
-		response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
-		println!("hit the server");
-		Ok(response)
+		if import_hold.wif.len() == 52 {
+			*key = KeyPair::keypair_frombase58wif(import_hold.wif);
+			*cbool = true;
+			let mut response = Response::with((status::Ok, "all good here"));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			println!("hit the server 52");
+			Ok(response)
+		} else if import_hold.wif.len() == 51 {
+			*key = KeyPair::keypair_frombase58wif(import_hold.wif);
+			*cbool = false;
+			let mut response = Response::with((status::Ok, "all good here"));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			println!("hit the server 51");
+			Ok(response)
+		} else {
+			let mut response = Response::with((status::Ok, "problem with your import"));
+			response.set_mut(Header(headers::AccessControlAllowOrigin::Any));
+			Ok(response)
+		}
 	}
 
 	///sets the proposal that will be voted on
