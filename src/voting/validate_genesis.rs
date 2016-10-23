@@ -433,6 +433,7 @@ impl VotingOutcome {
 			} else {
 				let pollhash_clone = pollhash.clone();
 				let pollhash_clone2 = pollhash.clone();
+				let pollhash_clone3 = pollhash.clone();
 
 				let vote_msg = vote.return_votemsg();
 				let vote_index = vote.return_voteindex();
@@ -459,8 +460,24 @@ impl VotingOutcome {
 				if vote_hashbytes == votehash_clone2 {
 					println!("true");
 				} else {
-					println!("something is not right here hash error on a vote");
-					return false;
+					let origin_key = KeyPair::recover(signa, votehash_clone);
+					let hash160 = KeyPair::address_base58compressed(&origin_key);
+					let vote_hash_elem = VoteHash {
+						poll_hash: pollhash_clone,
+						vote_message: vote_msg,
+						vote_msgindex: vote_index,
+						vote_publickey: hash160,
+					};
+					let vote_ahash = vote_hash_elem.return_hash();
+					let vote_hashclone3 = vote_ahash.clone();
+					let vote_hashbytes = vote_ahash.into_bytes();
+					if vote_hashbytes == votehash_clone3 {
+						println!("true");
+					} else {
+						println!("something is not right here hash error on a vote");
+						return false;
+					}
+					
 				}
 				let sig_verification = KeyPair::verify(&origin_key, the_sigclone, vote_hashclone3.into_bytes());
 				if sig_verification == true {
