@@ -44,6 +44,7 @@ struct Respond {
 struct MainPageProposals {
 	title: String,
 	hash: String,
+	end_block: u32
 }
 
 #[derive(RustcEncodable, RustcDecodable)]
@@ -303,7 +304,7 @@ fn main() {
         		let final_path = path_str.to_str().unwrap().to_string() + "/" + &poll_name;
         		println!("{:?}", &final_path);
         		let proposal = PollRound::return_pollfromfile(&Path::new(&final_path));
-        		let partial_prop = MainPageProposals { title: proposal.return_thetitle(), hash: proposal.return_pollhashstring() };
+        		let partial_prop = MainPageProposals { title: proposal.return_thetitle(), hash: proposal.return_pollhashstring(), end_block: proposal.return_endblockheight() };
         		proposals_vec.push(partial_prop);
        		},
     	}

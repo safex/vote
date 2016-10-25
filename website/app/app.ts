@@ -23,10 +23,14 @@ import {RemoveSpaces} from "./removespace.ts";
 
 	    	<a href="/"><button class="small-btn first">Home</button></a>
 		<a href="/submitproposal"><button class="small-btn">Submit Proposal</button></a>
+		<a href="https://safe.exchange"><button class="small-btn">Safe Exchange Forum</button></a>
 		<ul clas="list-unstyled">
 			<li *ngFor="let proposal of proposals">
 				<br>{{ proposal.title | json }} 
 				<br>{{ proposal.hash | json }} 
+				<br>Voting ends on this block: {{ proposal.end_block | json}} 
+				<br>The current block height: {{blockheight}}
+				<br>There are {{ (proposal.end_block | json) - blockheight }} blocks remaining for this voting (1 block is 10 minutes)
 				<br>
 				<a href="/viewproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button class="small-btn first">View Proposal</button></a>
 				<a href="/voteproposal/{{proposal.hash}}{{proposal.title | removeSpaces}}"><button class="small-btn">Vote on this Proposal</button></a>
@@ -43,8 +47,14 @@ import {RemoveSpaces} from "./removespace.ts";
 
 export class AppComponent {
 	public proposals;
+	public blockheight;
 
     constructor(private _http: Http) {}
+
+    get_blockheight() {
+    	return this._http.get('https://blockchain.info/q/getblockcount')
+    		.map(res => res.json())
+    }
 
    	get_proposals() {
 		return this._http.get('http://localhost:3100/return_proposals')
@@ -62,8 +72,21 @@ export class AppComponent {
 			);
 	}
 
+	read_blockheight() {
+		this.get_blockheight()
+			.subscribe( 
+				data => {
+					this.blockheight = data;
+				},
+				error => console.log("error"),
+				() => console.log("finished")
+			);
+	}
+
 	ngOnInit() {
 		this.readproposals();
+
+		this.read_blockheight();
 	}
 
 }
