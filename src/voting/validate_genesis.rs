@@ -459,8 +459,8 @@ impl VotingOutcome {
 					vote_publickey: hash160,
 				};
 				let vote_ahash = vote_hash_elem.return_hash();
-				let vote_hashclone3 = vote_ahash.clone();
 				let vote_hashbytes = vote_ahash.into_bytes();
+
 				if vote_hashbytes == votehash_clone2 {
 					println!("true");
 				} else {
@@ -473,7 +473,6 @@ impl VotingOutcome {
 						vote_publickey: hash160,
 					};
 					let vote_ahash = vote_hash_elem.return_hash();
-					let vote_hashclone3 = vote_ahash.clone();
 					let vote_hashbytes = vote_ahash.into_bytes();
 					if vote_hashbytes == votehash_clone3 {
 						println!("true");
@@ -481,9 +480,17 @@ impl VotingOutcome {
 						println!("something is not right here hash error on a vote");
 						return false;
 					}
+					let sig_verification = KeyPair::verify(&origin_key, the_sigclone, votehash_clone3);
+					if sig_verification == true {
+						println!("all good here");
+						return true;
+					} else {
+						println!("signature error on a vote");
+						return false;
+					}
 					
 				}
-				let sig_verification = KeyPair::verify(&origin_key, the_sigclone, vote_hashclone3.into_bytes());
+				let sig_verification = KeyPair::verify(&origin_key, the_sigclone, votehash_clone3);
 				if sig_verification == true {
 					println!("all good here");
 					return true;
